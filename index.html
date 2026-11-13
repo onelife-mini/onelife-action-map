@@ -64,6 +64,11 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .rc b{font-size:19px}
 .rc i{font-style:normal;font-size:14px;font-weight:700;color:var(--moss);margin-top:6px}
 .empty{background:#fff;border-radius:6px;padding:28px;color:var(--muted)}
+.partners{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.partners a{display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:6px;padding:18px 20px;text-decoration:none;min-height:44px}
+.partners a:hover{outline:1px solid var(--ink)}
+.partners b{font-size:17px;font-family:"Noto Serif TC",serif}
+.partners span{font-size:12px;color:var(--muted);letter-spacing:.1em}
 .foot{max-width:1440px;margin:84px auto 0;padding:56px 6vw 64px}
 .foot .line{border-top:2px solid var(--ink);padding-top:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .btn{display:inline-block;background:var(--ink);color:#fff;padding:18px 34px;font-size:17px;font-weight:700;border-radius:2px;text-decoration:none;border:0;font-family:inherit;cursor:pointer}
@@ -123,7 +128,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
       <div><small>撿廢重量</small><strong class="serif" id="kWeight">–</strong><em>公斤</em></div>
       <div><small>減少碳排</small><strong class="serif" id="kCarbon">–</strong><em>公斤</em></div>
     </div>
-    <p class="reach">累計<b id="kOrgs">–</b>個企業與團體 ・ <b id="kActions">–</b>場行動</p>
+    <p class="reach">累計合作<b id="kOrgs">–</b>個企業與團體 ・ 已記錄<b id="kActions">–</b>場行動</p>
     <p class="updated" id="updated"></p>
   </div>
 </header>
@@ -184,6 +189,13 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   <p class="eyebrow">LATEST</p>
   <h2 class="serif">最新行動</h2>
   <div class="recent" id="recent"></div>
+</section>
+
+<section class="sec" id="partnersSec">
+  <p class="eyebrow">PARTNERS</p>
+  <h2 class="serif">一起行動過的夥伴</h2>
+  <div class="partners" id="partners"></div>
+  <p class="note">點名稱可看當次的活動案例。</p>
 </section>
 
 <footer class="foot"><div class="line">
@@ -247,7 +259,7 @@ var SERIES_PHOTO = {'山系': B + '2025/03/EC668D5D-4006-41C8-8ECC-F72D2B0B7106-
 var COLORS = {'山系':'#3d6b3c','水系':'#2f6a86','路系':'#b5642c'};
 var METRIC_NAME = {people:'行動人次', weightKg:'撿廢公斤', carbonKg:'減碳公斤'};
 
-var D = {records:[], points:{}, plans:{}}, fSeries='全部', fYear='全部', metric='people', map, layer, loaded=false;
+var D = {records:[], points:{}, plans:{}, partners:[], totalOrgCount:0}, fSeries='全部', fYear='全部', metric='people', map, layer, loaded=false;
 function num(v){v=Number(v);return isFinite(v)?v:0}
 function fmt(v){return (Math.round(v*10)/10).toLocaleString('zh-TW')}
 function $(id){return document.getElementById(id)}
@@ -277,7 +289,8 @@ function chips(id,cb){
   });
 }
 function useData(d,isDemo){
-  D={records:(d.records||[]),points:d.points||{},plans:d.plans||{}};
+  D={records:(d.records||[]),points:d.points||{},plans:d.plans||{},partners:d.partners||[],totalOrgCount:d.totalOrgCount||0};
+  renderPartners();
   loaded=true;
   $('demo').classList.toggle('hide',!isDemo);
   $('updated').textContent=isDemo?'目前顯示示意資料':'最後更新 '+d.updated;
@@ -295,7 +308,9 @@ function render(){
   var P=0,H=0,W=0,C=0,orgs={};
   rs.forEach(function(r){P+=num(r.people);H+=num(r.personHours);W+=num(r.weightKg);C+=num(r.carbonKg);orgs[r.orgId||r.name]=1});
   $('kPeople').textContent=fmt(P);$('kHours').textContent=fmt(H);$('kWeight').textContent=fmt(W);$('kCarbon').textContent=fmt(C);
-  $('kOrgs').textContent=Object.keys(orgs).length;$('kActions').textContent=rs.length;
+  /* 全部年度、全部系別時，企業數含官網公開的歷史合作夥伴；篩選時只算已記錄的行動 */
+  var all=fYear==='全部'&&fSeries==='全部';
+  $('kOrgs').textContent=all?Math.max(D.totalOrgCount,Object.keys(orgs).length):Object.keys(orgs).length;$('kActions').textContent=rs.length;
   [['山系','sM','weightKg'],['水系','sW','weightKg'],['路系','sR','carbonKg']].forEach(function(s){
     var x=ry.filter(function(r){return r.series===s[0]}),v=0,p=0;
     x.forEach(function(r){v+=num(r[s[2]]);p+=num(r.people)});
@@ -360,6 +375,15 @@ function renderRecent(rs){
   $('recent').innerHTML=latest.map(function(r){
     var m=mainOf(r);
     return '<a class="rc" href="#a-'+esc(r.id)+'"><div class="ph" style="background-image:url(&quot;'+esc(photoOf(r))+'&quot;)"></div><div class="bd"><span>'+esc(String(r.date).replace(/-/g,'.'))+' ・ '+esc(r.series)+' ・ '+esc(r.point)+'</span><b class="serif">'+esc(r.name)+'　'+(r.series==='路系'?'減碳':'撿起')+' '+fmt(m.v)+' 公斤</b><span>'+fmt(num(r.people))+' 人</span><i>看這場的成果 →</i></div></a>';
+  }).join('');
+}
+
+function renderPartners(){
+  var p=D.partners||[];
+  $('partnersSec').classList.toggle('hide',!p.length);
+  $('partners').innerHTML=p.map(function(x){
+    var inner='<span>'+esc(x.type||'合作夥伴')+'</span><b>'+esc(x.name)+'</b>';
+    return /^https?:\/\//.test(x.url||'')?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+inner+'</a>':'<a>'+inner+'</a>';
   }).join('');
 }
 
