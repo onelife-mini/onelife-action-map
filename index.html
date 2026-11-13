@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>時光行動地圖｜OneLife 親清日月潭</title>
+<meta name="description" content="OneLife 親清日月潭時光行動地圖：山系撿廢、水系淨湖、路系踩踏的累積成果。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+/* 照片直接引用 onelife.com.tw 上的實拍照；點位照片在試算表「點位」分頁 F 欄設定 */
+:root{--paper:#f4f1ea;--ink:#1d2622;--muted:#59615c;--line:#e6e1d6;--mtn:#3d6b3c;--lake:#2f6a86;--road:#b5642c;--moss:#5f7a5a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Noto Sans TC",sans-serif;-webkit-font-smoothing:antialiased}
+.serif{font-family:"Noto Serif TC",serif}
+a{color:inherit}
+.hide{display:none!important}
+.hero{position:relative;min-height:720px;background:linear-gradient(180deg,rgba(10,20,18,.05),rgba(10,20,18,.15) 45%,rgba(10,20,18,.82)),var(--bg) center/cover;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:44px 6vw}
+.nav{display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:.12em;gap:12px;flex-wrap:wrap}
+.nav b{font-size:18px;letter-spacing:.2em}
+.nav a{text-decoration:none}
+h1{font-size:clamp(38px,6vw,76px);line-height:1.12;font-weight:900;margin-top:110px}
+.sub{font-size:clamp(16px,1.5vw,19px);opacity:.92;margin-top:16px;max-width:660px;line-height:1.7}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.35);margin-top:36px}
+.kpis div{padding:20px 12px 0 0}
+.kpis small{display:block;font-size:14px;opacity:.85;letter-spacing:.1em}
+.kpis strong{font-size:clamp(34px,4.4vw,58px);font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpis em{font-style:normal;font-size:16px;margin-left:6px;opacity:.85}
+.reach{display:flex;gap:28px;flex-wrap:wrap;margin-top:18px;font-size:15px;opacity:.95}
+.reach b{font-size:22px;margin:0 4px;font-family:"Noto Serif TC",serif}
+.updated{font-size:12px;opacity:.75;margin-top:12px}
+.sec{padding:84px 6vw 0;max-width:1440px;margin:0 auto}
+.eyebrow{font-size:13px;letter-spacing:.3em;color:var(--moss);font-weight:700}
+h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
+.bar{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:15px;padding:10px 18px;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer;min-height:44px}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.mapwrap{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
+#map{height:620px;border-radius:6px;background:#dfe6dc}
+.detail{background:#fff;border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.detail .ph{height:240px;background:center/cover #ccc}
+.detail .bd{padding:26px;display:flex;flex-direction:column;gap:12px}
+.detail h3{font-size:28px}
+.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
+.row b{font-size:19px;text-align:right}
+.hint{font-size:13px;color:var(--muted)}
+.trend{background:#fff;border-radius:6px;padding:24px}
+.trend svg{display:block;width:100%;height:auto}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{position:relative;height:460px;border-radius:6px;color:#fff;background:center/cover;overflow:hidden}
+.card .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.72));padding:30px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px}
+.card .k{font-size:14px;letter-spacing:.2em;opacity:.92}
+.card .n{font-size:64px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.card .n em{font-style:normal;font-size:20px;margin-left:6px}
+.card .d{font-size:15px;opacity:.92}
+.recent{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.rc{background:#fff;border-radius:6px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:transform .15s}
+.rc:hover{transform:translateY(-3px)}
+.rc .ph{height:180px;background:center/cover #ccc}
+.rc .bd{padding:20px;display:flex;flex-direction:column;gap:6px}
+.rc span{font-size:13px;color:var(--muted)}
+.rc b{font-size:19px}
+.rc i{font-style:normal;font-size:14px;font-weight:700;color:var(--moss);margin-top:6px}
+.empty{background:#fff;border-radius:6px;padding:28px;color:var(--muted)}
+.foot{max-width:1440px;margin:84px auto 0;padding:56px 6vw 64px}
+.foot .line{border-top:2px solid var(--ink);padding-top:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.btn{display:inline-block;background:var(--ink);color:#fff;padding:18px 34px;font-size:17px;font-weight:700;border-radius:2px;text-decoration:none;border:0;font-family:inherit;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.note{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.7}
+.demo{position:fixed;left:16px;bottom:16px;background:#b5642c;color:#fff;font-size:13px;padding:8px 14px;border-radius:999px;z-index:1000}
+.lbl{background:#fff;border:0;border-radius:999px;padding:3px 10px;font-weight:700;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.15);font-family:"Noto Sans TC",sans-serif}
+.leaflet-tooltip.lbl:before{display:none}
+.osm{filter:saturate(.55) sepia(.12) brightness(1.03)}
+/* 單場成果頁 */
+.r-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-radius:6px}
+.r-kpis div{padding:26px;border-left:1px solid var(--line)}
+.r-kpis div:first-child{border-left:0}
+.r-kpis small{display:block;font-size:14px;color:var(--muted)}
+.r-kpis strong{font-size:44px;font-weight:700}
+.r-kpis em{font-style:normal;font-size:16px;margin-left:4px;color:var(--muted)}
+.items{background:#fff;border-radius:6px;padding:26px;display:flex;flex-direction:column;gap:12px}
+.items div{display:grid;grid-template-columns:90px 1fr 50px;gap:12px;align-items:center;font-size:15px}
+.items i{height:10px;border-radius:5px;background:var(--mtn)}
+.items b{text-align:right}
+.story{display:flex;flex-direction:column;gap:28px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.seg:nth-child(even) .ph{order:2}
+.seg .ph{height:340px;border-radius:6px;background:center/cover #ccc}
+.seg.txt{grid-template-columns:1fr;background:#fff;border-radius:6px;padding:28px 32px}
+.seg .no{font-size:13px;letter-spacing:.3em;color:var(--moss);font-weight:700}
+.seg h3{font-size:28px;margin:8px 0 12px}
+.seg p{font-size:17px;line-height:1.85;color:#3a443f}
+.share{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.share input{flex:1 1 320px;font:inherit;font-size:14px;padding:16px;border:1px solid var(--line);background:#fff;border-radius:2px}
+.toast{font-size:14px;color:var(--moss);font-weight:700}
+@media (max-width:900px){
+  .hero{min-height:640px;padding:28px 6vw}
+  h1{margin-top:80px}
+  .kpis,.r-kpis{grid-template-columns:repeat(2,1fr)}
+  .r-kpis div:nth-child(3){border-left:0}
+  .mapwrap,.three,.recent,.seg{grid-template-columns:1fr}
+  .seg:nth-child(even) .ph{order:0}
+  #map{height:420px}
+  .card{height:340px}
+  .seg .ph{height:240px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 總覽 ===== -->
+<main id="overview">
+<header class="hero" id="heroMain">
+  <div class="nav"><b>ONELIFE</b><span>親清日月潭 ・ 時光行動地圖</span></div>
+  <div>
+    <h1 class="serif">每一次行動，<br>都讓日月潭更清澈。</h1>
+    <p class="sub">山系撿廢、水系淨湖、路系踩踏。OneLife 帶著每一個企業團隊留下的成果，都記在這張地圖上。</p>
+    <div class="kpis">
+      <div><small>行動人次</small><strong class="serif" id="kPeople">–</strong></div>
+      <div><small>行動時數</small><strong class="serif" id="kHours">–</strong><em>小時</em></div>
+      <div><small>撿廢重量</small><strong class="serif" id="kWeight">–</strong><em>公斤</em></div>
+      <div><small>減少碳排</small><strong class="serif" id="kCarbon">–</strong><em>公斤</em></div>
+    </div>
+    <p class="reach">累計<b id="kOrgs">–</b>個企業與團體 ・ <b id="kActions">–</b>場行動</p>
+    <p class="updated" id="updated"></p>
+  </div>
+</header>
+
+<section class="sec">
+  <p class="eyebrow">ACTION MAP</p>
+  <h2 class="serif">我們在哪裡行動</h2>
+  <div class="bar">
+    <div class="chips" id="fSeries" role="group" aria-label="篩選系別">
+      <button type="button" data-v="全部" aria-pressed="true">全部</button>
+      <button type="button" data-v="山系" aria-pressed="false">山系</button>
+      <button type="button" data-v="水系" aria-pressed="false">水系</button>
+      <button type="button" data-v="路系" aria-pressed="false">路系</button>
+    </div>
+    <div class="chips" id="fYear" role="group" aria-label="篩選年度"></div>
+  </div>
+  <div class="mapwrap">
+    <div id="map" aria-label="日月潭行動點位地圖"></div>
+    <aside class="detail" aria-live="polite">
+      <div class="ph" id="dPhoto"></div>
+      <div class="bd">
+        <p class="eyebrow" id="dSeries">點位詳情</p>
+        <h3 class="serif" id="dName">點地圖上的點位</h3>
+        <div class="row"><span>累計場次</span><b id="dCount">–</b></div>
+        <div class="row"><span>參與人次</span><b id="dPeople">–</b></div>
+        <div class="row"><span id="dMainLabel">成果</span><b id="dMain">–</b></div>
+        <div class="row"><span>最多品項</span><b id="dTop">–</b></div>
+        <p class="hint">點地圖上的任一點位，可看該點的累計成果。</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="sec">
+  <p class="eyebrow">GROWTH</p>
+  <h2 class="serif">一路累積的成果</h2>
+  <div class="bar">
+    <div class="chips" id="fMetric" role="group" aria-label="切換指標">
+      <button type="button" data-v="people" aria-pressed="true">行動人次</button>
+      <button type="button" data-v="weightKg" aria-pressed="false">撿廢公斤</button>
+      <button type="button" data-v="carbonKg" aria-pressed="false">減碳公斤</button>
+    </div>
+  </div>
+  <div class="trend"><div id="trend"></div></div>
+</section>
+
+<section class="sec">
+  <p class="eyebrow">THREE WAYS</p>
+  <h2 class="serif">山、水、路，三系並進</h2>
+  <div class="three">
+    <div class="card" id="cM"><div class="ov"><span class="k">山系 ・ 步道撿廢</span><span class="n serif"><span id="sM">–</span><em>公斤</em></span><span class="d" id="sMd"></span></div></div>
+    <div class="card" id="cW"><div class="ov"><span class="k">水系 ・ 立槳淨湖</span><span class="n serif"><span id="sW">–</span><em>公斤</em></span><span class="d" id="sWd"></span></div></div>
+    <div class="card" id="cR"><div class="ov"><span class="k">路系 ・ 單車踩踏</span><span class="n serif"><span id="sR">–</span><em>公斤減碳</em></span><span class="d" id="sRd"></span></div></div>
+  </div>
+</section>
+
+<section class="sec">
+  <p class="eyebrow">LATEST</p>
+  <h2 class="serif">最新行動</h2>
+  <div class="recent" id="recent"></div>
+</section>
+
+<footer class="foot"><div class="line">
+  <div><h2 class="serif" style="margin:0">想讓你的團隊，也留下一筆紀錄？</h2>
+  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重 ・ 數據經 OneLife 審核後公開</p></div>
+  <a class="btn" href="https://onelife.com.tw/sharing/">預約企業行程 →</a>
+</div></footer>
+</main>
+
+<!-- ===== 單場成果頁 ===== -->
+<main id="result" class="hide">
+<header class="hero" id="rHero">
+  <div class="nav"><b>ONELIFE</b><a href="#">← 看全部行動地圖</a></div>
+  <div>
+    <p class="eyebrow" style="color:#e6efe0">親清日月潭 ・ 時光行動成果</p>
+    <h1 class="serif" id="rName" style="margin-top:14px"></h1>
+    <p class="sub" id="rSub"></p>
+  </div>
+</header>
+<section class="sec">
+  <p class="eyebrow">IMPACT</p>
+  <h2 class="serif">這次行動留下的改變</h2>
+  <div class="r-kpis" id="rKpis"></div>
+</section>
+<section class="sec" id="rItemsSec">
+  <p class="eyebrow">WHAT WE PICKED UP</p>
+  <h2 class="serif">我們帶走了什麼</h2>
+  <div class="items" id="rItems"></div>
+</section>
+<section class="sec" id="rStorySec">
+  <p class="eyebrow">THE JOURNEY</p>
+  <h2 class="serif" id="rPlan"></h2>
+  <div class="story" id="rStory"></div>
+</section>
+<section class="sec">
+  <p class="eyebrow">SHARE</p>
+  <h2 class="serif">分享這次的成果</h2>
+  <div class="share">
+    <input id="rLink" readonly aria-label="成果頁連結">
+    <button class="btn" type="button" id="rCopy">複製連結</button>
+    <span class="toast" id="rToast" aria-live="polite"></span>
+  </div>
+  <p class="note">可以直接貼到 LINE、Email 或企業 ESG 報告。</p>
+</section>
+<footer class="foot"><div class="line">
+  <div><h2 class="serif" style="margin:0">也想帶團隊來日月潭行動？</h2>
+  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重</p></div>
+  <div class="share"><a class="btn ghost" href="#">看全部行動</a><a class="btn" href="https://onelife.com.tw/sharing/">預約企業行程 →</a></div>
+</div></footer>
+</main>
+
+<div class="demo hide" id="demo">目前顯示示意資料</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ===== 設定區 ===== */
+var DATA_URL = 'https://script.google.com/macros/s/AKfycbwZdFJf-nLO6u_-TSU6CQgrqxZLqimiY1YWBzwyTEG6aAmkFtMPF_YzP1nV2jM3FALr/exec?mode=data';
+var B = 'https://onelife.com.tw/wp-content/uploads/';
+var HERO_PHOTO = B + '2024/10/DJI_0737.jpg';
+var SERIES_PHOTO = {'山系': B + '2025/03/EC668D5D-4006-41C8-8ECC-F72D2B0B7106-561-000000061D187710.webp', '水系': B + '2024/10/DJI_0615.jpg', '路系': B + '2025/08/LEOF6303.jpg'};
+var COLORS = {'山系':'#3d6b3c','水系':'#2f6a86','路系':'#b5642c'};
+var METRIC_NAME = {people:'行動人次', weightKg:'撿廢公斤', carbonKg:'減碳公斤'};
+
+var D = {records:[], points:{}, plans:{}}, fSeries='全部', fYear='全部', metric='people', map, layer, loaded=false;
+function num(v){v=Number(v);return isFinite(v)?v:0}
+function fmt(v){return (Math.round(v*10)/10).toLocaleString('zh-TW')}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function bg(el,url){el.style.backgroundImage=url?'url("'+url.replace(/"/g,'%22')+'")':''}
+function photoOf(r){var p=D.points[r.point];return (p&&p.photo)||SERIES_PHOTO[r.series]||HERO_PHOTO}
+function mainOf(r){return r.series==='路系'?{label:'減少碳排',v:num(r.carbonKg)}:{label:'撿廢重量',v:num(r.weightKg)}}
+
+function init(){
+  $('heroMain').style.setProperty('--bg','url("'+HERO_PHOTO+'")');
+  bg($('cM'),SERIES_PHOTO['山系']);bg($('cW'),SERIES_PHOTO['水系']);bg($('cR'),SERIES_PHOTO['路系']);
+  map=L.map('map',{scrollWheelZoom:false}).setView([23.868,120.912],13);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors',className:'osm'}).addTo(map);
+  layer=L.layerGroup().addTo(map);
+  chips('fSeries',function(v){fSeries=v;render()});
+  chips('fMetric',function(v){metric=v;renderTrend(view())});
+  $('rCopy').addEventListener('click',copyLink);
+  window.addEventListener('hashchange',route);
+  fetch(DATA_URL).then(function(r){return r.json()}).then(function(d){useData(d,false)})
+    .catch(function(){useData(DEMO,true)});
+}
+function chips(id,cb){
+  $(id).addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    [].forEach.call($(id).children,function(x){x.setAttribute('aria-pressed',x===b)});
+    cb(b.dataset.v);
+  });
+}
+function useData(d,isDemo){
+  D={records:(d.records||[]),points:d.points||{},plans:d.plans||{}};
+  loaded=true;
+  $('demo').classList.toggle('hide',!isDemo);
+  $('updated').textContent=isDemo?'目前顯示示意資料':'最後更新 '+d.updated;
+  var years={};D.records.forEach(function(r){years[String(r.date).slice(0,4)]=1});
+  $('fYear').innerHTML=['全部'].concat(Object.keys(years).sort().reverse()).map(function(y,i){
+    return '<button type="button" data-v="'+y+'" aria-pressed="'+(i===0)+'">'+(y==='全部'?'全部年度':y+' 年')+'</button>'}).join('');
+  chips('fYear',function(v){fYear=v;render()});
+  render();route();
+}
+function byYear(r){return fYear==='全部'||String(r.date).slice(0,4)===fYear}
+function view(){return D.records.filter(byYear).filter(function(r){return fSeries==='全部'||r.series===fSeries})}
+
+function render(){
+  var rs=view(), ry=D.records.filter(byYear);
+  var P=0,H=0,W=0,C=0,orgs={};
+  rs.forEach(function(r){P+=num(r.people);H+=num(r.personHours);W+=num(r.weightKg);C+=num(r.carbonKg);orgs[r.orgId||r.name]=1});
+  $('kPeople').textContent=fmt(P);$('kHours').textContent=fmt(H);$('kWeight').textContent=fmt(W);$('kCarbon').textContent=fmt(C);
+  $('kOrgs').textContent=Object.keys(orgs).length;$('kActions').textContent=rs.length;
+  [['山系','sM','weightKg'],['水系','sW','weightKg'],['路系','sR','carbonKg']].forEach(function(s){
+    var x=ry.filter(function(r){return r.series===s[0]}),v=0,p=0;
+    x.forEach(function(r){v+=num(r[s[2]]);p+=num(r.people)});
+    $(s[1]).textContent=fmt(v);$(s[1]+'d').textContent=x.length+' 場 ・ '+fmt(p)+' 人次';
+  });
+  renderMap(rs);renderTrend(rs);renderRecent(rs);
+}
+
+function renderMap(rs){
+  layer.clearLayers();
+  var pts={};
+  rs.filter(function(r){return r.lat&&r.lng}).forEach(function(r){(pts[r.point]=pts[r.point]||{name:r.point,lat:r.lat,lng:r.lng,series:r.series,list:[]}).list.push(r)});
+  var keys=Object.keys(pts),first=null;
+  keys.forEach(function(k){
+    var p=pts[k],sum=0;p.list.forEach(function(r){sum+=num(r.weightKg)+num(r.carbonKg)});
+    L.circleMarker([p.lat,p.lng],{radius:Math.max(9,Math.min(26,6+Math.sqrt(sum)*2.4)),color:'#fff',weight:3,fillColor:COLORS[p.series]||'#1d2622',fillOpacity:.9})
+      .bindTooltip(esc(p.name),{permanent:true,direction:'top',offset:[0,-10],className:'lbl'})
+      .on('click',function(){showPoint(p)}).addTo(layer);
+    if(!first)first=p;
+  });
+  if(first)showPoint(first);else{ $('dName').textContent='這個條件下還沒有行動';['dCount','dPeople','dMain','dTop'].forEach(function(i){$(i).textContent='–'})}
+  var ll=keys.map(function(k){return [pts[k].lat,pts[k].lng]});
+  if(ll.length>1)map.fitBounds(L.latLngBounds(ll).pad(0.15));else if(ll.length===1)map.setView(ll[0],14);
+}
+function showPoint(p){
+  var people=0,w=0,c=0,items={};
+  p.list.forEach(function(r){people+=num(r.people);w+=num(r.weightKg);c+=num(r.carbonKg);
+    Object.keys(r.items||{}).forEach(function(k){items[k]=(items[k]||0)+num(r.items[k])})});
+  var top=Object.keys(items).filter(function(k){return items[k]>0&&k!=='其他件數'}).sort(function(a,b){return items[b]-items[a]}).slice(0,3);
+  var road=p.series==='路系';
+  $('dSeries').textContent=p.series+' ・ 點位詳情';$('dName').textContent=p.name;
+  $('dCount').textContent=p.list.length+' 場';$('dPeople').textContent=fmt(people)+' 人';
+  $('dMainLabel').textContent=road?'減少碳排':'撿廢重量';$('dMain').textContent=fmt(road?c:w)+' 公斤';
+  $('dTop').textContent=top.length?top.join(' ・ '):'—';
+  bg($('dPhoto'),photoOf(p.list[0]));
+}
+
+function renderTrend(rs){
+  var box=$('trend');
+  var vals={};rs.forEach(function(r){var m=String(r.date).slice(0,7);vals[m]=(vals[m]||0)+num(r[metric])});
+  var ks=Object.keys(vals).sort();
+  if(!ks.length){box.innerHTML='<p class="hint">這個條件下還沒有資料。</p>';return}
+  var y=+ks[0].slice(0,4),m=+ks[0].slice(5,7)-1,end=ks[ks.length-1],months=[],cum=0,pts=[];
+  if(m<1){m=12;y--} /* 從前一個月的 0 開始畫，曲線才看得出成長 */
+  while(true){var k=y+'-'+(m<10?'0':'')+m;months.push(k);if(k>=end)break;m++;if(m>12){m=1;y++}}
+  months.forEach(function(k){cum+=vals[k]||0;pts.push(cum)});
+  var W=900,H=280,l=56,r=24,t=24,b=40,n=months.length,max=Math.max(1,pts[pts.length-1]);
+  var X=function(i){return n===1?(l+W-r)/2:l+i*(W-l-r)/(n-1)},Yv=function(v){return t+(H-t-b)*(1-v/max)};
+  var line=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Yv(v).toFixed(1)}).join(' ');
+  var area=line+' L'+X(n-1).toFixed(1)+' '+(H-b)+' L'+X(0).toFixed(1)+' '+(H-b)+' Z';
+  var step=Math.max(1,Math.ceil(n/8)),xl='',grid='';
+  months.forEach(function(k,i){if(i%step===0||i===n-1)xl+='<text x="'+X(i)+'" y="'+(H-12)+'" text-anchor="middle" font-size="13" fill="#59615c">'+k.replace('-','.')+'</text>'});
+  [0,.5,1].forEach(function(f){var v=max*f;grid+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Yv(v)+'" y2="'+Yv(v)+'" stroke="#e6e1d6"/><text x="'+(l-10)+'" y="'+(Yv(v)+4)+'" text-anchor="end" font-size="12" fill="#59615c">'+fmt(v)+'</text>'});
+  var dots=pts.map(function(v,i){return '<circle cx="'+X(i)+'" cy="'+Yv(v)+'" r="4" fill="#3d6b3c"><title>'+months[i]+'：累計 '+fmt(v)+'</title></circle>'}).join('');
+  var last='<text x="'+Math.min(X(n-1),W-r-4)+'" y="'+(Yv(pts[n-1])-12)+'" text-anchor="end" font-size="16" font-weight="700" fill="#1d2622">累計 '+fmt(pts[n-1])+'</text>';
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+METRIC_NAME[metric]+'每月累積">'+grid+'<path d="'+area+'" fill="#3d6b3c" fill-opacity=".1"/><path d="'+line+'" fill="none" stroke="#3d6b3c" stroke-width="3"/>'+dots+last+xl+'</svg>';
+}
+
+function renderRecent(rs){
+  var latest=rs.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(a.id<b.id?1:-1)}).slice(0,6);
+  if(!latest.length){$('recent').innerHTML='<div class="empty">這個條件下還沒有行動。</div>';return}
+  $('recent').innerHTML=latest.map(function(r){
+    var m=mainOf(r);
+    return '<a class="rc" href="#a-'+esc(r.id)+'"><div class="ph" style="background-image:url(&quot;'+esc(photoOf(r))+'&quot;)"></div><div class="bd"><span>'+esc(String(r.date).replace(/-/g,'.'))+' ・ '+esc(r.series)+' ・ '+esc(r.point)+'</span><b class="serif">'+esc(r.name)+'　'+(r.series==='路系'?'減碳':'撿起')+' '+fmt(m.v)+' 公斤</b><span>'+fmt(num(r.people))+' 人</span><i>看這場的成果 →</i></div></a>';
+  }).join('');
+}
+
+/* ===== 單場成果頁 ===== */
+function route(){
+  var h=location.hash.slice(1);
+  if(h.indexOf('a-')===0){
+    if(!loaded)return;
+    var id=h.slice(2),r=null;
+    D.records.forEach(function(x){if(x.id===id)r=x});
+    showResult(r);
+  }else{
+    $('result').classList.add('hide');$('overview').classList.remove('hide');
+    document.title='時光行動地圖｜OneLife 親清日月潭';
+    setTimeout(function(){map.invalidateSize()},50);
+  }
+}
+function showResult(r){
+  $('overview').classList.add('hide');$('result').classList.remove('hide');window.scrollTo(0,0);
+  var plan=r&&r.plan&&D.plans[r.plan]||[];
+  if(!r){
+    $('rName').textContent='找不到這場行動';$('rSub').textContent='可能還在審核中，或連結有誤。';
+    $('rHero').style.setProperty('--bg','url("'+HERO_PHOTO+'")');
+    ['rItemsSec','rStorySec'].forEach(function(i){$(i).classList.add('hide')});$('rKpis').innerHTML='';
+    return;
+  }
+  var heroImg=(plan[0]&&plan[0].photo)||photoOf(r);
+  $('rHero').style.setProperty('--bg','url("'+heroImg+'")');
+  $('rName').textContent=r.name;
+  $('rSub').textContent=String(r.date).replace(/-/g,'.')+' ・ '+r.point+(r.route?'（'+r.route+'）':'')+' ・ '+r.series;
+  document.title=r.name+'的時光行動成果｜OneLife';
+  var m=mainOf(r),k=[['參與人數',fmt(num(r.people)),'人'],['行動時數',fmt(num(r.personHours)),'小時'],[m.label,fmt(m.v),'公斤']];
+  if(r.series==='路系')k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);
+  else if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
+  else{var c=0;Object.keys(r.items||{}).forEach(function(i){c+=num(r.items[i])});k.push(['撿起件數',fmt(c),'件'])}
+  $('rKpis').innerHTML=k.map(function(x){return '<div><small>'+x[0]+'</small><strong class="serif">'+x[1]+'</strong><em>'+x[2]+'</em></div>'}).join('');
+  var items=Object.keys(r.items||{}).filter(function(i){return num(r.items[i])>0}).sort(function(a,b){return num(r.items[b])-num(r.items[a])});
+  var mx=items.length?num(r.items[items[0]]):1;
+  $('rItemsSec').classList.toggle('hide',!items.length);
+  $('rItems').innerHTML=items.map(function(i){return '<div><span>'+esc(i)+'</span><i style="width:'+Math.max(4,num(r.items[i])/mx*100)+'%;background:'+(COLORS[r.series]||'#3d6b3c')+'"></i><b>'+fmt(num(r.items[i]))+'</b></div>'}).join('');
+  $('rStorySec').classList.toggle('hide',!plan.length);
+  $('rPlan').textContent=r.plan||'';
+  $('rStory').innerHTML=plan.map(function(s,i){
+    var body='<div><p class="no">STEP '+(i+1)+'</p><h3 class="serif">'+esc(s.title)+'</h3><p>'+esc(s.text)+'</p></div>';
+    if(!s.photo)return '<div class="seg txt">'+body+'</div>'; /* 沒有照片的段落只放文字，不重複同一張圖 */
+    return '<div class="seg"><div class="ph" style="background-image:url(&quot;'+esc(s.photo)+'&quot;)"></div>'+body+'</div>';
+  }).join('');
+  $('rLink').value=location.href;$('rToast').textContent='';
+}
+function copyLink(){
+  var v=$('rLink').value;
+  var done=function(){$('rToast').textContent='已複製'};
+  try{navigator.clipboard.writeText(v).then(done,function(){$('rLink').select();$('rToast').textContent='請長按連結複製'})}
+  catch(e){$('rLink').select();$('rToast').textContent='請長按連結複製'}
+}
+
+/* 資料讀不到時才用的示意資料 */
+var DEMO={updated:'示意',records:[
+ {id:'demo-1',date:'2026-11-08',name:'企業團體',orgId:1,series:'山系',point:'金龍山步道',plan:'',people:28,personHours:98,weightKg:19.4,carbonKg:'',lat:23.9053,lng:120.9061,items:{'寶特瓶':43,'瓶蓋':43,'菸蒂':14}},
+ {id:'demo-2',date:'2026-10-26',name:'企業團體',orgId:2,series:'水系',point:'月牙灣',plan:'',people:18,personHours:36,weightKg:6.2,safety:18,carbonKg:'',lat:23.8409,lng:120.9053,items:{'寶特瓶':12,'塑膠袋':6}},
+ {id:'demo-3',date:'2026-10-03',name:'企業團體',orgId:3,series:'路系',point:'向山',route:'向山－水社單車',km:3.4,people:22,personHours:66,carbonKg:4.4,lat:23.8520,lng:120.9023,items:{}}
+]};
+
+init();
+</script>
+</body>
+</html>
