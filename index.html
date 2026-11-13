@@ -7,7 +7,6 @@
 <meta name="description" content="OneLife 親清日月潭時光行動地圖：山系撿廢、水系淨湖、路系踩踏的累積成果。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 /* 照片直接引用 onelife.com.tw 上的實拍照；點位照片在試算表「點位」分頁 F 欄設定 */
 :root{--paper:#f4f1ea;--ink:#1d2622;--muted:#59615c;--line:#e6e1d6;--mtn:#3d6b3c;--lake:#2f6a86;--road:#b5642c;--moss:#5f7a5a}
@@ -37,14 +36,46 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chips button{font:inherit;font-size:15px;padding:10px 18px;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer;min-height:44px}
 .chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-.mapwrap{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
-#map{height:620px;border-radius:6px;background:#dfe6dc}
-.detail{background:#fff;border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
-.detail .ph{height:240px;background:center/cover #ccc}
-.detail .bd{padding:26px;display:flex;flex-direction:column;gap:12px}
-.detail h3{font-size:28px}
-.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
-.row b{font-size:19px;text-align:right}
+/* 地圖（夜色湖面）：固定不動，點圓點換右側資料 */
+.mapwrap{display:grid;grid-template-columns:1.25fr 1fr;border-radius:10px;overflow:hidden;background:#0f1c1b;color:#eef2ee;--m:#8fc79a;--w:#7cc4e0;--r:#e7a36a}
+.mapside{padding:22px 24px 16px}
+#lakeMap{display:block;width:100%;height:auto;max-height:640px}
+#lakeMap .lake{fill:#173236;stroke:#2f5c61;stroke-width:1.4}
+#lakeMap .rip{fill:none;stroke:#1f4045;stroke-linejoin:round}
+#lakeMap .lakename{font-family:"Noto Serif TC",serif;font-size:40px;font-weight:900;fill:rgba(140,200,210,.10);letter-spacing:.3em}
+#lakeMap .route{fill:none;stroke:var(--r);stroke-width:2.5;stroke-dasharray:2 7;stroke-linecap:round}
+#lakeMap .off{stroke:#93a29c;stroke-width:1;stroke-dasharray:3 5;fill:none}
+.pt{cursor:pointer;transition:opacity .25s;outline:none}
+.pt .hit{fill:transparent}
+.pt .halo{fill:var(--c);opacity:0;transition:opacity .25s}
+.pt .dot{fill:var(--c);stroke:#0f1c1b;stroke-width:3;filter:url(#glow)}
+.pt text{font-size:15px;font-weight:700;fill:#eef2ee;paint-order:stroke;stroke:#0f1c1b;stroke-width:5px;stroke-linejoin:round}
+.pt.on .halo{opacity:.35}
+.pt.none .dot{fill:#0f1c1b;stroke:var(--c);stroke-width:2;filter:none}
+.pt.none text{fill:#93a29c}
+.has .pt:not(.on){opacity:.5}
+.pt:focus-visible .halo{opacity:.35}
+.pt[data-sr=山系]{--c:var(--m)}.pt[data-sr=水系]{--c:var(--w)}.pt[data-sr=路系]{--c:var(--r)}
+.legend{display:flex;gap:16px;font-size:13px;color:#93a29c;margin-top:4px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.legend .ln{width:18px;height:0;border-radius:0;border-top:2.5px dotted var(--r)}
+.detail{background:#14231f;display:flex;flex-direction:column}
+.detail .ph{height:260px;background:center/cover #24342f;position:relative}
+.detail .tag{position:absolute;left:18px;top:18px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;padding:6px 12px;border-radius:999px;letter-spacing:.1em}
+.detail .bd{padding:26px 28px 28px;display:flex;flex-direction:column;gap:14px;flex:1}
+.detail h3{font-size:30px;font-weight:900}
+.detail .sub{font-size:14px;color:#93a29c}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #24342f;border-bottom:1px solid #24342f}
+.nums div{padding:16px 0}
+.nums div+div{padding-left:16px;border-left:1px solid #24342f}
+.nums small{display:block;font-size:13px;color:#93a29c}
+.nums b{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+.nums em{font-style:normal;font-size:13px;margin-left:3px;color:#93a29c}
+.top3{font-size:15px;line-height:1.7}
+.top3 span{color:#93a29c;margin-right:8px}
+.go{margin-top:auto;font-weight:700;font-size:15px;color:#9fd0a8;text-decoration:none}
+.fade{animation:fd .35s ease}
+@keyframes fd{from{opacity:0}to{opacity:1}}
 .hint{font-size:13px;color:var(--muted)}
 .trend{background:#fff;border-radius:6px;padding:24px}
 .trend svg{display:block;width:100%;height:auto}
@@ -75,9 +106,6 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
 .note{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.7}
 .demo{position:fixed;left:16px;bottom:16px;background:#b5642c;color:#fff;font-size:13px;padding:8px 14px;border-radius:999px;z-index:1000}
-.lbl{background:#fff;border:0;border-radius:999px;padding:3px 10px;font-weight:700;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.15);font-family:"Noto Sans TC",sans-serif}
-.leaflet-tooltip.lbl:before{display:none}
-.osm{filter:saturate(.55) sepia(.12) brightness(1.03)}
 /* 單場成果頁 */
 .r-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-radius:6px}
 .r-kpis div{padding:26px;border-left:1px solid var(--line)}
@@ -107,7 +135,10 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   .r-kpis div:nth-child(3){border-left:0}
   .mapwrap,.three,.recent,.seg{grid-template-columns:1fr}
   .seg:nth-child(even) .ph{order:0}
-  #map{height:420px}
+  .mapside{padding:18px 12px 10px}
+  .detail .ph{height:200px}
+  .detail h3{font-size:24px}
+  .nums b{font-size:24px}
   .card{height:340px}
   .seg .ph{height:240px}
 }
@@ -146,19 +177,20 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
     <div class="chips" id="fYear" role="group" aria-label="篩選年度"></div>
   </div>
   <div class="mapwrap">
-    <div id="map" aria-label="日月潭行動點位地圖"></div>
-    <aside class="detail" aria-live="polite">
-      <div class="ph" id="dPhoto"></div>
-      <div class="bd">
-        <p class="eyebrow" id="dSeries">點位詳情</p>
-        <h3 class="serif" id="dName">點地圖上的點位</h3>
-        <div class="row"><span>累計場次</span><b id="dCount">–</b></div>
-        <div class="row"><span>參與人次</span><b id="dPeople">–</b></div>
-        <div class="row"><span id="dMainLabel">成果</span><b id="dMain">–</b></div>
-        <div class="row"><span>最多品項</span><b id="dTop">–</b></div>
-        <p class="hint">點地圖上的任一點位，可看該點的累計成果。</p>
-      </div>
-    </aside>
+    <div class="mapside">
+      <svg viewBox="0 0 600 720" id="lakeMap" role="img" aria-label="日月潭行動點位圖，點圓點可看該處成果">
+        <defs><filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <path class="rip" d="M10.6 268.6 L17.2 274.4 L26.5 267.2 L31.8 270.1 L26.5 281.7 L33.2 290.4 L29.2 297.6 L23.9 296.2 L23.9 304.9 L33.2 303.4 L31.8 309.2 L37.1 312.1 L57.1 297.6 L63.7 313.6 L47.8 316.5 L45.1 331.0 L53.1 332.4 L57.1 342.6 L50.4 351.3 L39.8 348.4 L43.8 360.0 L37.1 364.3 L42.5 365.8 L45.1 374.5 L41.1 377.4 L51.7 378.8 L67.7 354.2 L84.9 344.1 L98.2 393.3 L106.1 391.9 L112.8 402.1 L107.5 419.4 L103.5 420.9 L102.2 413.6 L92.9 431.1 L70.3 438.3 L73.0 454.2 L95.5 454.2 L98.2 467.3 L110.1 480.3 L102.2 487.6 L80.9 522.4 L78.3 535.5 L83.6 554.3 L100.8 555.8 L120.7 531.1 L128.7 542.7 L138.0 571.7 L134.0 577.5 L138.0 586.2 L124.7 597.8 L126.0 619.5 L136.7 621.0 L136.7 613.8 L143.3 610.9 L149.9 622.4 L157.9 621.0 L153.9 631.1 L168.5 648.5 L171.2 644.2 L177.8 647.1 L180.4 639.9 L185.7 639.9 L185.7 655.8 L201.7 663.0 L205.6 657.2 L208.3 671.8 L217.6 665.9 L218.9 671.8 L225.5 670.3 L230.9 676.1 L240.1 658.7 L234.8 651.4 L236.2 641.3 L246.8 641.3 L248.1 635.5 L248.1 619.5 L242.8 616.6 L244.1 607.9 L233.5 594.9 L241.5 584.8 L240.1 579.0 L229.5 581.8 L225.5 576.0 L236.2 571.7 L236.2 565.9 L228.2 567.3 L216.3 560.1 L209.6 542.7 L200.3 534.0 L193.7 538.3 L184.4 525.3 L189.7 516.6 L199.0 526.8 L204.3 525.3 L212.3 512.2 L232.2 516.6 L236.2 505.0 L217.6 483.2 L203.0 481.8 L196.4 460.1 L188.4 474.6 L181.8 473.1 L179.1 438.3 L188.4 423.8 L189.7 410.8 L181.8 404.9 L180.4 387.6 L176.5 384.6 L199.0 371.6 L208.3 386.1 L204.3 393.3 L207.0 419.4 L212.3 418.0 L218.9 420.9 L229.5 415.1 L234.8 419.4 L245.4 416.6 L257.4 410.8 L266.7 433.9 L290.6 455.7 L295.9 454.2 L295.9 433.9 L287.9 435.4 L281.3 428.1 L289.2 416.6 L289.2 407.8 L298.5 400.6 L293.2 391.9 L291.9 377.4 L317.1 349.8 L322.4 362.9 L319.7 374.5 L322.4 389.0 L329.0 396.2 L326.4 418.0 L335.7 416.6 L339.6 425.2 L343.6 423.8 L347.6 429.6 L343.6 439.8 L350.3 470.2 L363.5 483.2 L362.2 487.6 L366.2 486.1 L367.5 496.3 L388.7 503.6 L398.0 493.4 L392.7 483.2 L398.0 449.9 L407.3 436.8 L421.9 426.7 L425.9 429.6 L428.5 422.3 L463.0 422.3 L472.3 416.6 L472.3 402.1 L464.4 383.2 L453.7 378.8 L441.8 381.8 L435.2 371.6 L433.8 364.3 L441.8 362.9 L451.1 351.3 L449.8 339.7 L464.4 339.7 L467.0 331.0 L492.2 338.2 L500.2 335.3 L504.2 332.4 L505.5 319.4 L496.2 315.0 L496.2 303.4 L486.9 290.4 L504.2 296.2 L514.8 297.6 L526.7 290.4 L537.3 297.6 L549.3 296.2 L571.8 275.9 L577.1 264.3 L570.5 257.0 L578.5 249.8 L570.5 241.1 L554.6 232.4 L553.3 226.6 L545.3 223.7 L522.7 226.6 L506.8 236.8 L500.2 232.4 L505.5 210.7 L498.9 196.1 L486.9 197.6 L480.3 188.9 L485.6 180.2 L480.3 174.4 L472.3 180.2 L465.7 171.5 L459.1 172.9 L443.1 188.9 L428.5 172.9 L404.7 206.3 L384.8 200.5 L362.2 206.3 L364.9 199.0 L378.1 194.7 L384.8 183.1 L376.8 167.1 L380.8 155.6 L363.5 149.8 L356.9 152.6 L351.6 146.8 L348.9 126.5 L352.9 109.2 L337.0 120.8 L338.3 126.5 L330.4 133.8 L314.4 133.8 L317.1 122.2 L310.5 120.8 L310.5 113.5 L318.4 106.2 L321.1 94.7 L318.4 93.2 L303.8 99.0 L298.5 96.1 L294.5 110.6 L285.3 99.0 L257.4 99.0 L245.4 104.8 L232.2 103.3 L236.2 110.6 L234.8 145.4 L230.9 161.3 L212.3 181.6 L214.9 188.9 L211.0 196.1 L200.3 201.9 L183.1 197.6 L173.8 200.5 L164.5 209.2 L163.2 220.8 L148.6 232.4 L116.8 244.0 L111.4 251.2 L96.9 242.5 L95.5 212.1 L111.4 209.2 L116.8 201.9 L143.3 203.4 L144.6 199.0 L118.1 193.2 L102.2 181.6 L77.0 183.1 L54.4 172.9 L71.6 233.8 L69.0 238.2 L54.4 238.2 L21.2 246.9 L10.6 268.6Z" stroke-width="34" opacity=".35"/>
+        <path class="rip" d="M10.6 268.6 L17.2 274.4 L26.5 267.2 L31.8 270.1 L26.5 281.7 L33.2 290.4 L29.2 297.6 L23.9 296.2 L23.9 304.9 L33.2 303.4 L31.8 309.2 L37.1 312.1 L57.1 297.6 L63.7 313.6 L47.8 316.5 L45.1 331.0 L53.1 332.4 L57.1 342.6 L50.4 351.3 L39.8 348.4 L43.8 360.0 L37.1 364.3 L42.5 365.8 L45.1 374.5 L41.1 377.4 L51.7 378.8 L67.7 354.2 L84.9 344.1 L98.2 393.3 L106.1 391.9 L112.8 402.1 L107.5 419.4 L103.5 420.9 L102.2 413.6 L92.9 431.1 L70.3 438.3 L73.0 454.2 L95.5 454.2 L98.2 467.3 L110.1 480.3 L102.2 487.6 L80.9 522.4 L78.3 535.5 L83.6 554.3 L100.8 555.8 L120.7 531.1 L128.7 542.7 L138.0 571.7 L134.0 577.5 L138.0 586.2 L124.7 597.8 L126.0 619.5 L136.7 621.0 L136.7 613.8 L143.3 610.9 L149.9 622.4 L157.9 621.0 L153.9 631.1 L168.5 648.5 L171.2 644.2 L177.8 647.1 L180.4 639.9 L185.7 639.9 L185.7 655.8 L201.7 663.0 L205.6 657.2 L208.3 671.8 L217.6 665.9 L218.9 671.8 L225.5 670.3 L230.9 676.1 L240.1 658.7 L234.8 651.4 L236.2 641.3 L246.8 641.3 L248.1 635.5 L248.1 619.5 L242.8 616.6 L244.1 607.9 L233.5 594.9 L241.5 584.8 L240.1 579.0 L229.5 581.8 L225.5 576.0 L236.2 571.7 L236.2 565.9 L228.2 567.3 L216.3 560.1 L209.6 542.7 L200.3 534.0 L193.7 538.3 L184.4 525.3 L189.7 516.6 L199.0 526.8 L204.3 525.3 L212.3 512.2 L232.2 516.6 L236.2 505.0 L217.6 483.2 L203.0 481.8 L196.4 460.1 L188.4 474.6 L181.8 473.1 L179.1 438.3 L188.4 423.8 L189.7 410.8 L181.8 404.9 L180.4 387.6 L176.5 384.6 L199.0 371.6 L208.3 386.1 L204.3 393.3 L207.0 419.4 L212.3 418.0 L218.9 420.9 L229.5 415.1 L234.8 419.4 L245.4 416.6 L257.4 410.8 L266.7 433.9 L290.6 455.7 L295.9 454.2 L295.9 433.9 L287.9 435.4 L281.3 428.1 L289.2 416.6 L289.2 407.8 L298.5 400.6 L293.2 391.9 L291.9 377.4 L317.1 349.8 L322.4 362.9 L319.7 374.5 L322.4 389.0 L329.0 396.2 L326.4 418.0 L335.7 416.6 L339.6 425.2 L343.6 423.8 L347.6 429.6 L343.6 439.8 L350.3 470.2 L363.5 483.2 L362.2 487.6 L366.2 486.1 L367.5 496.3 L388.7 503.6 L398.0 493.4 L392.7 483.2 L398.0 449.9 L407.3 436.8 L421.9 426.7 L425.9 429.6 L428.5 422.3 L463.0 422.3 L472.3 416.6 L472.3 402.1 L464.4 383.2 L453.7 378.8 L441.8 381.8 L435.2 371.6 L433.8 364.3 L441.8 362.9 L451.1 351.3 L449.8 339.7 L464.4 339.7 L467.0 331.0 L492.2 338.2 L500.2 335.3 L504.2 332.4 L505.5 319.4 L496.2 315.0 L496.2 303.4 L486.9 290.4 L504.2 296.2 L514.8 297.6 L526.7 290.4 L537.3 297.6 L549.3 296.2 L571.8 275.9 L577.1 264.3 L570.5 257.0 L578.5 249.8 L570.5 241.1 L554.6 232.4 L553.3 226.6 L545.3 223.7 L522.7 226.6 L506.8 236.8 L500.2 232.4 L505.5 210.7 L498.9 196.1 L486.9 197.6 L480.3 188.9 L485.6 180.2 L480.3 174.4 L472.3 180.2 L465.7 171.5 L459.1 172.9 L443.1 188.9 L428.5 172.9 L404.7 206.3 L384.8 200.5 L362.2 206.3 L364.9 199.0 L378.1 194.7 L384.8 183.1 L376.8 167.1 L380.8 155.6 L363.5 149.8 L356.9 152.6 L351.6 146.8 L348.9 126.5 L352.9 109.2 L337.0 120.8 L338.3 126.5 L330.4 133.8 L314.4 133.8 L317.1 122.2 L310.5 120.8 L310.5 113.5 L318.4 106.2 L321.1 94.7 L318.4 93.2 L303.8 99.0 L298.5 96.1 L294.5 110.6 L285.3 99.0 L257.4 99.0 L245.4 104.8 L232.2 103.3 L236.2 110.6 L234.8 145.4 L230.9 161.3 L212.3 181.6 L214.9 188.9 L211.0 196.1 L200.3 201.9 L183.1 197.6 L173.8 200.5 L164.5 209.2 L163.2 220.8 L148.6 232.4 L116.8 244.0 L111.4 251.2 L96.9 242.5 L95.5 212.1 L111.4 209.2 L116.8 201.9 L143.3 203.4 L144.6 199.0 L118.1 193.2 L102.2 181.6 L77.0 183.1 L54.4 172.9 L71.6 233.8 L69.0 238.2 L54.4 238.2 L21.2 246.9 L10.6 268.6Z" stroke-width="16" opacity=".6"/>
+        <path class="lake" d="M10.6 268.6 L17.2 274.4 L26.5 267.2 L31.8 270.1 L26.5 281.7 L33.2 290.4 L29.2 297.6 L23.9 296.2 L23.9 304.9 L33.2 303.4 L31.8 309.2 L37.1 312.1 L57.1 297.6 L63.7 313.6 L47.8 316.5 L45.1 331.0 L53.1 332.4 L57.1 342.6 L50.4 351.3 L39.8 348.4 L43.8 360.0 L37.1 364.3 L42.5 365.8 L45.1 374.5 L41.1 377.4 L51.7 378.8 L67.7 354.2 L84.9 344.1 L98.2 393.3 L106.1 391.9 L112.8 402.1 L107.5 419.4 L103.5 420.9 L102.2 413.6 L92.9 431.1 L70.3 438.3 L73.0 454.2 L95.5 454.2 L98.2 467.3 L110.1 480.3 L102.2 487.6 L80.9 522.4 L78.3 535.5 L83.6 554.3 L100.8 555.8 L120.7 531.1 L128.7 542.7 L138.0 571.7 L134.0 577.5 L138.0 586.2 L124.7 597.8 L126.0 619.5 L136.7 621.0 L136.7 613.8 L143.3 610.9 L149.9 622.4 L157.9 621.0 L153.9 631.1 L168.5 648.5 L171.2 644.2 L177.8 647.1 L180.4 639.9 L185.7 639.9 L185.7 655.8 L201.7 663.0 L205.6 657.2 L208.3 671.8 L217.6 665.9 L218.9 671.8 L225.5 670.3 L230.9 676.1 L240.1 658.7 L234.8 651.4 L236.2 641.3 L246.8 641.3 L248.1 635.5 L248.1 619.5 L242.8 616.6 L244.1 607.9 L233.5 594.9 L241.5 584.8 L240.1 579.0 L229.5 581.8 L225.5 576.0 L236.2 571.7 L236.2 565.9 L228.2 567.3 L216.3 560.1 L209.6 542.7 L200.3 534.0 L193.7 538.3 L184.4 525.3 L189.7 516.6 L199.0 526.8 L204.3 525.3 L212.3 512.2 L232.2 516.6 L236.2 505.0 L217.6 483.2 L203.0 481.8 L196.4 460.1 L188.4 474.6 L181.8 473.1 L179.1 438.3 L188.4 423.8 L189.7 410.8 L181.8 404.9 L180.4 387.6 L176.5 384.6 L199.0 371.6 L208.3 386.1 L204.3 393.3 L207.0 419.4 L212.3 418.0 L218.9 420.9 L229.5 415.1 L234.8 419.4 L245.4 416.6 L257.4 410.8 L266.7 433.9 L290.6 455.7 L295.9 454.2 L295.9 433.9 L287.9 435.4 L281.3 428.1 L289.2 416.6 L289.2 407.8 L298.5 400.6 L293.2 391.9 L291.9 377.4 L317.1 349.8 L322.4 362.9 L319.7 374.5 L322.4 389.0 L329.0 396.2 L326.4 418.0 L335.7 416.6 L339.6 425.2 L343.6 423.8 L347.6 429.6 L343.6 439.8 L350.3 470.2 L363.5 483.2 L362.2 487.6 L366.2 486.1 L367.5 496.3 L388.7 503.6 L398.0 493.4 L392.7 483.2 L398.0 449.9 L407.3 436.8 L421.9 426.7 L425.9 429.6 L428.5 422.3 L463.0 422.3 L472.3 416.6 L472.3 402.1 L464.4 383.2 L453.7 378.8 L441.8 381.8 L435.2 371.6 L433.8 364.3 L441.8 362.9 L451.1 351.3 L449.8 339.7 L464.4 339.7 L467.0 331.0 L492.2 338.2 L500.2 335.3 L504.2 332.4 L505.5 319.4 L496.2 315.0 L496.2 303.4 L486.9 290.4 L504.2 296.2 L514.8 297.6 L526.7 290.4 L537.3 297.6 L549.3 296.2 L571.8 275.9 L577.1 264.3 L570.5 257.0 L578.5 249.8 L570.5 241.1 L554.6 232.4 L553.3 226.6 L545.3 223.7 L522.7 226.6 L506.8 236.8 L500.2 232.4 L505.5 210.7 L498.9 196.1 L486.9 197.6 L480.3 188.9 L485.6 180.2 L480.3 174.4 L472.3 180.2 L465.7 171.5 L459.1 172.9 L443.1 188.9 L428.5 172.9 L404.7 206.3 L384.8 200.5 L362.2 206.3 L364.9 199.0 L378.1 194.7 L384.8 183.1 L376.8 167.1 L380.8 155.6 L363.5 149.8 L356.9 152.6 L351.6 146.8 L348.9 126.5 L352.9 109.2 L337.0 120.8 L338.3 126.5 L330.4 133.8 L314.4 133.8 L317.1 122.2 L310.5 120.8 L310.5 113.5 L318.4 106.2 L321.1 94.7 L318.4 93.2 L303.8 99.0 L298.5 96.1 L294.5 110.6 L285.3 99.0 L257.4 99.0 L245.4 104.8 L232.2 103.3 L236.2 110.6 L234.8 145.4 L230.9 161.3 L212.3 181.6 L214.9 188.9 L211.0 196.1 L200.3 201.9 L183.1 197.6 L173.8 200.5 L164.5 209.2 L163.2 220.8 L148.6 232.4 L116.8 244.0 L111.4 251.2 L96.9 242.5 L95.5 212.1 L111.4 209.2 L116.8 201.9 L143.3 203.4 L144.6 199.0 L118.1 193.2 L102.2 181.6 L77.0 183.1 L54.4 172.9 L71.6 233.8 L69.0 238.2 L54.4 238.2 L21.2 246.9 L10.6 268.6Z" stroke-linejoin="round"/>
+        <text class="lakename" x="300" y="300" text-anchor="middle">日月潭</text>
+        <g id="mapExtra"></g>
+        <g id="pts"></g>
+        <text x="584" y="708" text-anchor="end" font-size="12" fill="#93a29c">N ↑ ・ 位置示意</text>
+      </svg>
+      <div class="legend"><span><i style="background:var(--m)"></i>山系 撿廢</span><span><i style="background:var(--w)"></i>水系 淨湖</span><span><i style="background:var(--r)"></i>路系 單車</span><span><i class="ln"></i>單車路線</span></div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite"></aside>
   </div>
 </section>
 
@@ -249,7 +281,6 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 
 <div class="demo hide" id="demo">目前顯示示意資料</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* ===== 設定區 ===== */
 var DATA_URL = 'https://script.google.com/macros/s/AKfycbwZdFJf-nLO6u_-TSU6CQgrqxZLqimiY1YWBzwyTEG6aAmkFtMPF_YzP1nV2jM3FALr/exec?mode=data';
@@ -259,7 +290,7 @@ var SERIES_PHOTO = {'山系': B + '2025/03/EC668D5D-4006-41C8-8ECC-F72D2B0B7106-
 var COLORS = {'山系':'#3d6b3c','水系':'#2f6a86','路系':'#b5642c'};
 var METRIC_NAME = {people:'行動人次', weightKg:'撿廢公斤', carbonKg:'減碳公斤'};
 
-var D = {records:[], points:{}, plans:{}, partners:[], totalOrgCount:0}, fSeries='全部', fYear='全部', metric='people', map, layer, loaded=false;
+var D = {records:[], points:{}, plans:{}, partners:[], totalOrgCount:0}, fSeries='全部', fYear='全部', metric='people', loaded=false, MP={}, selPt=null;
 function num(v){v=Number(v);return isFinite(v)?v:0}
 function fmt(v){return (Math.round(v*10)/10).toLocaleString('zh-TW')}
 function $(id){return document.getElementById(id)}
@@ -271,9 +302,8 @@ function mainOf(r){return r.series==='路系'?{label:'減少碳排',v:num(r.carb
 function init(){
   $('heroMain').style.setProperty('--bg','url("'+HERO_PHOTO+'")');
   bg($('cM'),SERIES_PHOTO['山系']);bg($('cW'),SERIES_PHOTO['水系']);bg($('cR'),SERIES_PHOTO['路系']);
-  map=L.map('map',{scrollWheelZoom:false}).setView([23.868,120.912],13);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors',className:'osm'}).addTo(map);
-  layer=L.layerGroup().addTo(map);
+  $('pts').addEventListener('click',function(e){var t=e.target.closest('.pt');if(t)showPoint(t.dataset.k)});
+  $('pts').addEventListener('keydown',function(e){var t=e.target.closest('.pt');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();showPoint(t.dataset.k)}});
   chips('fSeries',function(v){fSeries=v;render()});
   chips('fMetric',function(v){metric=v;renderTrend(view())});
   $('rCopy').addEventListener('click',copyLink);
@@ -319,33 +349,56 @@ function render(){
   renderMap(rs);renderTrend(rs);renderRecent(rs);
 }
 
+/* 經緯度 → 地圖座標（與湖形同一套換算） */
+function proj(lat,lng){return {x:((lng-120.89)*1e4-90)*0.915*1.45, y:(440-(lat-23.83)*1e4)*1.45+70}}
 function renderMap(rs){
-  layer.clearLayers();
   var pts={};
-  rs.filter(function(r){return r.lat&&r.lng}).forEach(function(r){(pts[r.point]=pts[r.point]||{name:r.point,lat:r.lat,lng:r.lng,series:r.series,list:[]}).list.push(r)});
-  var keys=Object.keys(pts),first=null;
-  keys.forEach(function(k){
-    var p=pts[k],sum=0;p.list.forEach(function(r){sum+=num(r.weightKg)+num(r.carbonKg)});
-    L.circleMarker([p.lat,p.lng],{radius:Math.max(9,Math.min(26,6+Math.sqrt(sum)*2.4)),color:'#fff',weight:3,fillColor:COLORS[p.series]||'#1d2622',fillOpacity:.9})
-      .bindTooltip(esc(p.name),{permanent:true,direction:'top',offset:[0,-10],className:'lbl'})
-      .on('click',function(){showPoint(p)}).addTo(layer);
-    if(!first)first=p;
+  Object.keys(D.points).forEach(function(k){var p=D.points[k];if(p&&p.lat&&p.lng)pts[k]={name:k,lat:+p.lat,lng:+p.lng,series:p.series,list:[]}});
+  rs.filter(function(r){return r.lat&&r.lng}).forEach(function(r){(pts[r.point]=pts[r.point]||{name:r.point,lat:+r.lat,lng:+r.lng,series:r.series,list:[]}).list.push(r)});
+  /* 系別篩選時，只留該系點位 */
+  Object.keys(pts).forEach(function(k){if(fSeries!=='全部'&&pts[k].series!==fSeries&&!pts[k].list.length)delete pts[k]});
+  MP=pts;
+  var h='',ex='';
+  Object.keys(pts).forEach(function(k){
+    var p=pts[k],q=proj(p.lat,p.lng),note='',sum=0;
+    p.list.forEach(function(r){sum+=num(r.weightKg)+num(r.carbonKg)});
+    if(q.y<40){note='↑ 北方約 '+Math.max(1,Math.round((p.lat-23.8724)*111))+' 公里';ex+='<path class="off" d="M'+q.x.toFixed(0)+' 52 L'+q.x.toFixed(0)+' 150"/>';q.y=40}
+    if(q.y>690)q.y=690; q.x=Math.max(20,Math.min(580,q.x));
+    p.x=q.x;p.y=q.y;p.offNote=note;
+    var r=p.list.length?(8+Math.min(14,Math.sqrt(sum)*1.1)):7, right=q.x<470;
+    h+='<g class="pt'+(p.list.length?'':' none')+'" data-k="'+esc(k)+'" data-sr="'+esc(p.series)+'" tabindex="0" role="button" aria-label="'+esc(k)+'">'+
+      '<circle class="hit" cx="'+q.x+'" cy="'+q.y+'" r="28"/><circle class="halo" cx="'+q.x+'" cy="'+q.y+'" r="24"/>'+
+      '<circle class="dot" cx="'+q.x+'" cy="'+q.y+'" r="'+r.toFixed(1)+'"/>'+
+      '<text x="'+(right?q.x+r+6:q.x-r-6)+'" y="'+(q.y+5)+'" text-anchor="'+(right?'start':'end')+'">'+esc(k)+'</text></g>';
   });
-  if(first)showPoint(first);else{ $('dName').textContent='這個條件下還沒有行動';['dCount','dPeople','dMain','dTop'].forEach(function(i){$(i).textContent='–'})}
-  var ll=keys.map(function(k){return [pts[k].lat,pts[k].lng]});
-  if(ll.length>1)map.fitBounds(L.latLngBounds(ll).pad(0.15));else if(ll.length===1)map.setView(ll[0],14);
+  /* 單車路線：向山 → 水社 */
+  var a=pts['向山'],b=pts['水社'];
+  if(a&&b&&(fSeries==='全部'||fSeries==='路系'))ex+='<path class="route" d="M'+a.x+' '+a.y+' C '+(a.x-30)+' '+(a.y-60)+', '+(b.x-110)+' '+(b.y+30)+', '+b.x+' '+b.y+'"/>';
+  $('mapExtra').innerHTML=ex;$('pts').innerHTML=h;
+  var keys=Object.keys(pts);
+  if(selPt&&pts[selPt])showPoint(selPt);
+  else{var best=keys.slice().sort(function(x,y){return pts[y].list.length-pts[x].list.length})[0];if(best)showPoint(best,true);else $('detail').innerHTML='<div class="bd"><p class="hint">這個條件下還沒有點位。</p></div>'}
 }
-function showPoint(p){
-  var people=0,w=0,c=0,items={};
+function showPoint(k,auto){
+  var p=MP[k];if(!p)return;
+  if(!auto)selPt=k;
+  $('lakeMap').classList.toggle('has',!auto);
+  [].forEach.call($('pts').children,function(el){el.classList.toggle('on',el.dataset.k===k)});
+  var people=0,w=0,c=0,items={},road=p.series==='路系';
   p.list.forEach(function(r){people+=num(r.people);w+=num(r.weightKg);c+=num(r.carbonKg);
-    Object.keys(r.items||{}).forEach(function(k){items[k]=(items[k]||0)+num(r.items[k])})});
-  var top=Object.keys(items).filter(function(k){return items[k]>0&&k!=='其他件數'}).sort(function(a,b){return items[b]-items[a]}).slice(0,3);
-  var road=p.series==='路系';
-  $('dSeries').textContent=p.series+' ・ 點位詳情';$('dName').textContent=p.name;
-  $('dCount').textContent=p.list.length+' 場';$('dPeople').textContent=fmt(people)+' 人';
-  $('dMainLabel').textContent=road?'減少碳排':'撿廢重量';$('dMain').textContent=fmt(road?c:w)+' 公斤';
-  $('dTop').textContent=top.length?top.join(' ・ '):'—';
-  bg($('dPhoto'),photoOf(p.list[0]));
+    Object.keys(r.items||{}).forEach(function(x){items[x]=(items[x]||0)+num(r.items[x])})});
+  var top=Object.keys(items).filter(function(x){return items[x]>0&&x!=='其他件數'}).sort(function(a,b){return items[b]-items[a]}).slice(0,3);
+  var latest=p.list.slice().sort(function(a,b){return String(b.date).localeCompare(String(a.date))})[0];
+  var photo=(D.points[k]&&D.points[k].photo)||SERIES_PHOTO[p.series]||HERO_PHOTO;
+  var line=road?(c>0?'<span>約等於少開</span>'+fmt(c/0.2343)+' 公里汽車':''):(top.length?'<span>最常撿到</span>'+esc(top.join(' ・ ')):'');
+  $('detail').innerHTML='<div class="fade" style="display:flex;flex-direction:column;flex:1">'+
+    '<div class="ph" style="background-image:url(&quot;'+esc(photo)+'&quot;)"><span class="tag">'+esc(p.series)+'</span></div>'+
+    '<div class="bd"><div><h3 class="serif">'+esc(k)+'</h3>'+(p.offNote?'<p class="sub">'+p.offNote+'</p>':'')+'</div>'+
+    '<div class="nums"><div><small>行動</small><b>'+p.list.length+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(people)+'</b><em>人次</em></div>'+
+    '<div><small>'+(road?'減碳':'撿廢')+'</small><b>'+fmt(road?c:w)+'</b><em>公斤</em></div></div>'+
+    (line?'<p class="top3">'+line+'</p>':'')+
+    (latest?'<a class="go" href="#a-'+esc(latest.id)+'">看這裡最新一場行動 →</a>':'<p class="hint" style="margin-top:auto;color:#93a29c">這裡的第一筆行動紀錄，正在路上。</p>')+
+    '</div></div>';
 }
 
 function renderTrend(rs){
