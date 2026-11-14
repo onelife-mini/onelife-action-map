@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>拾光行動地圖｜OneLife 親清日月潭</title>
-<meta name="description" content="OneLife 親清日月潭拾光行動地圖：山系撿廢、水系淨湖、路系踩踏的累積成果。">
+<title>親清日月潭｜拾光行動</title>
+<meta name="description" content="親清日月潭・拾光行動：山系撿廢、水系淨湖、路系踩踏，每一次行動的公開成果與地圖。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -17,7 +17,10 @@ a{color:inherit}
 .hide{display:none!important}
 .hero{position:relative;min-height:720px;background:linear-gradient(180deg,rgba(10,20,18,.05),rgba(10,20,18,.15) 45%,rgba(10,20,18,.82)),var(--bg) center/cover;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:44px 6vw}
 .nav{display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:.12em;gap:12px;flex-wrap:wrap}
-.nav b{font-size:18px;letter-spacing:.2em}
+.nav .brand{font-family:"Noto Serif TC",serif;font-size:20px;font-weight:900;letter-spacing:.15em;text-decoration:none}
+.menu{display:flex;gap:22px}
+.menu a{padding:8px 0;border-bottom:1px solid transparent}
+.menu a[aria-current="page"]{border-color:currentColor}
 .nav a{text-decoration:none}
 h1{font-size:clamp(38px,6vw,76px);line-height:1.12;font-weight:900;margin-top:110px}
 .sub{font-size:clamp(16px,1.5vw,19px);opacity:.92;margin-top:16px;max-width:660px;line-height:1.7}
@@ -114,7 +117,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .r-kpis strong{font-size:44px;font-weight:700}
 .r-kpis em{font-style:normal;font-size:16px;margin-left:4px;color:var(--muted)}
 .items{background:#fff;border-radius:6px;padding:26px;display:flex;flex-direction:column;gap:12px}
-.items div{display:grid;grid-template-columns:90px 1fr 50px;gap:12px;align-items:center;font-size:15px}
+.items div{display:grid;grid-template-columns:150px 1fr 50px;gap:12px;align-items:center;font-size:15px}
 .items i{height:10px;border-radius:5px;background:var(--mtn)}
 .items b{text-align:right}
 .story{display:flex;flex-direction:column;gap:28px}
@@ -149,10 +152,10 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <!-- ===== 總覽 ===== -->
 <main id="overview">
 <header class="hero" id="heroMain">
-  <div class="nav"><b>ONELIFE</b><span>親清日月潭 ・ 拾光行動地圖</span></div>
+  <div class="nav"><a class="brand" href="./">親清日月潭</a><nav class="menu" aria-label="主選單"><a href="./" aria-current="page">首頁</a><a href="trips.html">行程</a><a href="about.html">關於</a></nav></div>
   <div>
     <h1 class="serif">每一次行動，<br>都讓日月潭更清澈。</h1>
-    <p class="sub">山系撿廢、水系淨湖、路系踩踏。OneLife 帶著每一個企業團隊留下的成果，都記在這張地圖上。</p>
+    <p class="sub">山系撿廢、水系淨湖、路系踩踏。每一個團隊在日月潭留下的成果，都記在這張地圖上。</p>
     <div class="kpis">
       <div><small>行動人次</small><strong class="serif" id="kPeople">–</strong></div>
       <div><small>行動時數</small><strong class="serif" id="kHours">–</strong><em>小時</em></div>
@@ -223,24 +226,20 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   <div class="recent" id="recent"></div>
 </section>
 
-<section class="sec" id="partnersSec">
-  <p class="eyebrow">PARTNERS</p>
-  <h2 class="serif">一起行動過的夥伴</h2>
-  <div class="partners" id="partners"></div>
-  <p class="note">點名稱可看當次的活動案例。</p>
-</section>
+
 
 <footer class="foot"><div class="line">
   <div><h2 class="serif" style="margin:0">想讓你的團隊，也留下一筆紀錄？</h2>
-  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重 ・ 數據經 OneLife 審核後公開</p></div>
-  <a class="btn" href="https://onelife.com.tw/sharing/">預約企業行程 →</a>
+  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重 ・ 數據經執行單位審核後公開</p>
+  <p class="note">執行單位：日月潭戶外運動專家有限公司</p></div>
+  <div class="share"><a class="btn ghost" href="trips.html">看行程</a><a class="btn" href="https://onelife.com.tw/">企業想參與 →</a></div>
 </div></footer>
 </main>
 
 <!-- ===== 單場成果頁 ===== -->
 <main id="result" class="hide">
 <header class="hero" id="rHero">
-  <div class="nav"><b>ONELIFE</b><a href="#">← 看全部行動地圖</a></div>
+  <div class="nav"><a class="brand" href="./">親清日月潭</a><nav class="menu" aria-label="主選單"><a href="#">← 回首頁</a></nav></div>
   <div>
     <p class="eyebrow" style="color:#e6efe0">親清日月潭 ・ 拾光行動成果</p>
     <h1 class="serif" id="rName" style="margin-top:14px"></h1>
@@ -275,7 +274,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <footer class="foot"><div class="line">
   <div><h2 class="serif" style="margin:0">也想帶團隊來日月潭行動？</h2>
   <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重</p></div>
-  <div class="share"><a class="btn ghost" href="#">看全部行動</a><a class="btn" href="https://onelife.com.tw/sharing/">預約企業行程 →</a></div>
+  <div class="share"><a class="btn ghost" href="#">看全部行動</a><a class="btn" href="https://onelife.com.tw/">企業想參與 →</a></div>
 </div></footer>
 </main>
 
@@ -402,24 +401,30 @@ function showPoint(k,auto){
 }
 
 function renderTrend(rs){
+  /* 按年呈現：長條＝當年數字，折線＝累積 */
   var box=$('trend');
-  var vals={};rs.forEach(function(r){var m=String(r.date).slice(0,7);vals[m]=(vals[m]||0)+num(r[metric])});
+  var vals={};rs.forEach(function(r){var y=String(r.date).slice(0,4);vals[y]=(vals[y]||0)+num(r[metric])});
   var ks=Object.keys(vals).sort();
   if(!ks.length){box.innerHTML='<p class="hint">這個條件下還沒有資料。</p>';return}
-  var y=+ks[0].slice(0,4),m=+ks[0].slice(5,7)-1,end=ks[ks.length-1],months=[],cum=0,pts=[];
-  if(m<1){m=12;y--} /* 從前一個月的 0 開始畫，曲線才看得出成長 */
-  while(true){var k=y+'-'+(m<10?'0':'')+m;months.push(k);if(k>=end)break;m++;if(m>12){m=1;y++}}
-  months.forEach(function(k){cum+=vals[k]||0;pts.push(cum)});
-  var W=900,H=280,l=56,r=24,t=24,b=40,n=months.length,max=Math.max(1,pts[pts.length-1]);
-  var X=function(i){return n===1?(l+W-r)/2:l+i*(W-l-r)/(n-1)},Yv=function(v){return t+(H-t-b)*(1-v/max)};
+  var now=new Date().getFullYear(),years=[],y;
+  for(y=+ks[0];y<=Math.max(+ks[ks.length-1],0);y++)years.push(String(y));
+  var cum=0,pts=years.map(function(k){cum+=vals[k]||0;return cum});
+  var W=900,H=300,l=56,r=24,t=36,b=48,n=years.length,max=Math.max(1,pts[n-1]);
+  var slot=(W-l-r)/n,bw=Math.min(72,slot*.5);
+  var X=function(i){return l+slot*(i+.5)},Yv=function(v){return t+(H-t-b)*(1-v/max)};
+  var grid='';[0,.5,1].forEach(function(f){var v=max*f;grid+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Yv(v)+'" y2="'+Yv(v)+'" stroke="#e6e1d6"/><text x="'+(l-10)+'" y="'+(Yv(v)+4)+'" text-anchor="end" font-size="12" fill="#59615c">'+fmt(v)+'</text>'});
+  var bars='',xl='',dots='',lab='';
+  years.forEach(function(k,i){
+    var v=vals[k]||0,yv=Yv(v);
+    bars+='<rect x="'+(X(i)-bw/2)+'" y="'+yv+'" width="'+bw+'" height="'+(H-b-yv)+'" rx="3" fill="#a9c4a3"><title>'+k+' 年：'+fmt(v)+'</title></rect>';
+    if(v>0)bars+='<text x="'+X(i)+'" y="'+(H-b-8)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#1d2622">+'+fmt(v)+'</text>';
+    xl+='<text x="'+X(i)+'" y="'+(H-22)+'" text-anchor="middle" font-size="14" fill="#1d2622">'+k+'</text>'+(+k===now?'<text x="'+X(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="11" fill="#59615c">進行中</text>':'');
+    dots+='<circle cx="'+X(i)+'" cy="'+Yv(pts[i])+'" r="5" fill="#3d6b3c"><title>'+k+' 年累計：'+fmt(pts[i])+'</title></circle>';
+    lab+='<text x="'+X(i)+'" y="'+(Yv(pts[i])-12)+'" text-anchor="middle" font-size="'+(i===n-1?16:13)+'" font-weight="700" fill="#3d6b3c">'+fmt(pts[i])+'</text>';
+  });
   var line=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Yv(v).toFixed(1)}).join(' ');
-  var area=line+' L'+X(n-1).toFixed(1)+' '+(H-b)+' L'+X(0).toFixed(1)+' '+(H-b)+' Z';
-  var step=Math.max(1,Math.ceil(n/8)),xl='',grid='';
-  months.forEach(function(k,i){if(i%step===0||i===n-1)xl+='<text x="'+X(i)+'" y="'+(H-12)+'" text-anchor="middle" font-size="13" fill="#59615c">'+k.replace('-','.')+'</text>'});
-  [0,.5,1].forEach(function(f){var v=max*f;grid+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Yv(v)+'" y2="'+Yv(v)+'" stroke="#e6e1d6"/><text x="'+(l-10)+'" y="'+(Yv(v)+4)+'" text-anchor="end" font-size="12" fill="#59615c">'+fmt(v)+'</text>'});
-  var dots=pts.map(function(v,i){return '<circle cx="'+X(i)+'" cy="'+Yv(v)+'" r="4" fill="#3d6b3c"><title>'+months[i]+'：累計 '+fmt(v)+'</title></circle>'}).join('');
-  var last='<text x="'+Math.min(X(n-1),W-r-4)+'" y="'+(Yv(pts[n-1])-12)+'" text-anchor="end" font-size="16" font-weight="700" fill="#1d2622">累計 '+fmt(pts[n-1])+'</text>';
-  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+METRIC_NAME[metric]+'每月累積">'+grid+'<path d="'+area+'" fill="#3d6b3c" fill-opacity=".1"/><path d="'+line+'" fill="none" stroke="#3d6b3c" stroke-width="3"/>'+dots+last+xl+'</svg>';
+  var legend='<g font-size="12" fill="#59615c"><rect x="'+l+'" y="6" width="12" height="12" rx="2" fill="#a9c4a3"/><text x="'+(l+18)+'" y="16">當年</text><line x1="'+(l+60)+'" x2="'+(l+82)+'" y1="12" y2="12" stroke="#3d6b3c" stroke-width="3"/><text x="'+(l+88)+'" y="16">累積</text></g>';
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+METRIC_NAME[metric]+'逐年與累積">'+grid+bars+'<path d="'+line+'" fill="none" stroke="#3d6b3c" stroke-width="3"/>'+dots+lab+xl+legend+'</svg>';
 }
 
 function renderRecent(rs){
@@ -433,7 +438,7 @@ function renderRecent(rs){
 
 function renderPartners(){
   var p=D.partners||[];
-  $('partnersSec').classList.toggle('hide',!p.length);
+  if(!$('partnersSec'))return;$('partnersSec').classList.toggle('hide',!p.length);
   $('partners').innerHTML=p.map(function(x){
     var inner='<span>'+esc(x.type||'合作夥伴')+'</span><b>'+esc(x.name)+'</b>';
     return /^https?:\/\//.test(x.url||'')?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+inner+'</a>':'<a>'+inner+'</a>';
@@ -450,7 +455,7 @@ function route(){
     showResult(r);
   }else{
     $('result').classList.add('hide');$('overview').classList.remove('hide');
-    document.title='拾光行動地圖｜OneLife 親清日月潭';
+    document.title='親清日月潭｜拾光行動';
     setTimeout(function(){map.invalidateSize()},50);
   }
 }
@@ -467,7 +472,7 @@ function showResult(r){
   $('rHero').style.setProperty('--bg','url("'+heroImg+'")');
   $('rName').textContent=r.name;
   $('rSub').textContent=String(r.date).replace(/-/g,'.')+' ・ '+r.point+(r.route?'（'+r.route+'）':'')+' ・ '+r.series;
-  document.title=r.name+'的拾光行動成果｜OneLife';
+  document.title=r.name+'的拾光行動成果｜親清日月潭';
   var m=mainOf(r),k=[['參與人數',fmt(num(r.people)),'人'],['行動時數',fmt(num(r.personHours)),'小時'],[m.label,fmt(m.v),'公斤']];
   if(r.series==='路系')k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);
   else if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
