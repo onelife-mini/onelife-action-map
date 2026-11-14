@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>時光行動地圖｜OneLife 親清日月潭</title>
-<meta name="description" content="OneLife 親清日月潭時光行動地圖：山系撿廢、水系淨湖、路系踩踏的累積成果。">
+<title>拾光行動地圖｜OneLife 親清日月潭</title>
+<meta name="description" content="OneLife 親清日月潭拾光行動地圖：山系撿廢、水系淨湖、路系踩踏的累積成果。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -149,7 +149,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <!-- ===== 總覽 ===== -->
 <main id="overview">
 <header class="hero" id="heroMain">
-  <div class="nav"><b>ONELIFE</b><span>親清日月潭 ・ 時光行動地圖</span></div>
+  <div class="nav"><b>ONELIFE</b><span>親清日月潭 ・ 拾光行動地圖</span></div>
   <div>
     <h1 class="serif">每一次行動，<br>都讓日月潭更清澈。</h1>
     <p class="sub">山系撿廢、水系淨湖、路系踩踏。OneLife 帶著每一個企業團隊留下的成果，都記在這張地圖上。</p>
@@ -242,7 +242,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <header class="hero" id="rHero">
   <div class="nav"><b>ONELIFE</b><a href="#">← 看全部行動地圖</a></div>
   <div>
-    <p class="eyebrow" style="color:#e6efe0">親清日月潭 ・ 時光行動成果</p>
+    <p class="eyebrow" style="color:#e6efe0">親清日月潭 ・ 拾光行動成果</p>
     <h1 class="serif" id="rName" style="margin-top:14px"></h1>
     <p class="sub" id="rSub"></p>
   </div>
@@ -450,7 +450,7 @@ function route(){
     showResult(r);
   }else{
     $('result').classList.add('hide');$('overview').classList.remove('hide');
-    document.title='時光行動地圖｜OneLife 親清日月潭';
+    document.title='拾光行動地圖｜OneLife 親清日月潭';
     setTimeout(function(){map.invalidateSize()},50);
   }
 }
@@ -467,7 +467,7 @@ function showResult(r){
   $('rHero').style.setProperty('--bg','url("'+heroImg+'")');
   $('rName').textContent=r.name;
   $('rSub').textContent=String(r.date).replace(/-/g,'.')+' ・ '+r.point+(r.route?'（'+r.route+'）':'')+' ・ '+r.series;
-  document.title=r.name+'的時光行動成果｜OneLife';
+  document.title=r.name+'的拾光行動成果｜OneLife';
   var m=mainOf(r),k=[['參與人數',fmt(num(r.people)),'人'],['行動時數',fmt(num(r.personHours)),'小時'],[m.label,fmt(m.v),'公斤']];
   if(r.series==='路系')k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);
   else if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
