@@ -204,6 +204,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   .sub2 a{padding:10px 14px;background:#f4f1ea;border-radius:999px;font-size:14px}
   .cta{margin:8px 0 2px;text-align:center}
 }
+#rHero{background-position:center 62%}
 </style>
 </head>
 <body>
@@ -344,7 +345,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 var DATA_URL = 'https://script.google.com/macros/s/AKfycbwZdFJf-nLO6u_-TSU6CQgrqxZLqimiY1YWBzwyTEG6aAmkFtMPF_YzP1nV2jM3FALr/exec?mode=data';
 var B = 'https://onelife.com.tw/wp-content/uploads/';
 var HERO_PHOTO = B + '2024/10/DJI_0737.jpg';
-var SERIES_PHOTO = {'山系': B + '2025/03/EC668D5D-4006-41C8-8ECC-F72D2B0B7106-561-000000061D187710.webp', '水系': B + '2024/10/DJI_0615.jpg', '路系': B + '2025/08/LEOF6303.jpg'};
+var SERIES_PHOTO = {'山系': './photos/ICC-3956.jpg', '水系': B + '2024/10/DJI_0615.jpg', '路系': B + '2025/08/LEOF6303.jpg'};
 var COLORS = {'山系':'#3d6b3c','水系':'#2f6a86','路系':'#b5642c'};
 var METRIC_NAME = {people:'行動人次', weightKg:'撿廢公斤', carbonKg:'減碳公斤'};
 
@@ -354,7 +355,11 @@ function fmt(v){return (Math.round(v*10)/10).toLocaleString('zh-TW')}
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function bg(el,url){el.style.backgroundImage=url?'url("'+url.replace(/"/g,'%22')+'")':''}
-function photoOf(r){var p=D.points[r.point];return (p&&p.photo)||SERIES_PHOTO[r.series]||HERO_PHOTO}
+// 每一場行動自己的照片（來自 Google 相簿，存在 photos/ 資料夾）
+var GUIDE_PHOTO=B+'2025/03/EC668D5D-4006-41C8-8ECC-F72D2B0B7106-561-000000061D187710.webp';
+var REC_PHOTO={'ICC-5168':1,'ICC-5158':1,'ICC-5151':1,'ICC-5105':1,'ICC-4419':1,'ICC-4187':1,'ICC-3956':1,'ICC-3924':1,'ICC-4006':GUIDE_PHOTO};
+function recPhoto(r){var v=REC_PHOTO[r.id];return v===1?'./photos/'+r.id+'.jpg':(v||'')}
+function photoOf(r){var p=D.points[r.point];return recPhoto(r)||(p&&p.photo)||SERIES_PHOTO[r.series]||HERO_PHOTO}
 function mainOf(r){return r.series==='路系'?{label:'減少碳排',v:num(r.carbonKg)}:{label:'撿廢重量',v:num(r.weightKg)}}
 
 function init(){
@@ -381,7 +386,7 @@ function chips(id,cb){
   });
 }
 function useData(d,isDemo){
-  D={records:(d.records||[]),points:d.points||{},plans:d.plans||{},partners:d.partners||[],totalOrgCount:d.totalOrgCount||0};
+  D={records:(d.records||[]),points:d.points||{},plans:d.plans||{},partners:d.partners||[],totalOrgCount:d.totalOrgCount||0};Object.keys(D.points).forEach(function(k){if(/EC668D5D/.test(D.points[k].photo||''))D.points[k].photo=SERIES_PHOTO['山系']});Object.keys(D.plans).forEach(function(k){(D.plans[k]||[]).forEach(function(x){if(/EC668D5D/.test(x.photo||''))x.photo=SERIES_PHOTO['山系']})});
   renderPartners();
   loaded=true;
   $('demo').classList.toggle('hide',!isDemo);
@@ -574,7 +579,7 @@ function showResult(r){
     ['rItemsSec','rStorySec'].forEach(function(i){$(i).classList.add('hide')});$('rKpis').innerHTML='';
     return;
   }
-  var heroImg=(plan[0]&&plan[0].photo)||photoOf(r);
+  var heroImg=recPhoto(r)||HERO_PHOTO;
   $('rHero').style.setProperty('--bg','url("'+heroImg+'")');
   $('rName').textContent=r.name;
   $('rSub').textContent=String(r.date).replace(/-/g,'.')+' ・ '+r.point+(r.route?'（'+r.route+'）':'')+' ・ '+r.series;
