@@ -147,7 +147,7 @@ var D=null;
 var SR=[
  {k:'山系',en:'MOUNTAIN',t:'山系・淨山',lead:'走進步道，一路撿拾，把山上的垃圾帶下山。',how:'<b>怎麼算</b>　現場用吊秤秤總重量，品項照 ICC 國際淨灘紀錄表分類。',unit:'撿廢'},
  {k:'水系',en:'LAKE',t:'水系・淨湖',lead:'划著立槳出發，撈起湖面與湖岸的漂流物。',how:'<b>怎麼算</b>　上岸後分類秤重，另外記錄保麗龍碎片、釣魚線等日月潭常見的漂流物。',unit:'撿廢'},
- {k:'路系',en:'ROAD',t:'路系・單車',lead:'用踩踏取代開車，把騎過的每一公里換算成減少的碳排。',how:'<b>怎麼算</b>　路線公里 × 人數 ÷ 每車 4 人 × 0.2343 公斤／公里（平均汽油車）。',unit:'減碳'}];
+ {k:'路系',en:'ROAD',t:'路系・單車',lead:'用踩踏取代開車，把騎過的每一公里換算成減少的碳排。沿路撿到垃圾，也一樣秤重記錄。',how:'<b>怎麼算</b>　路線公里 × 人數 ÷ 每車 4 人 × 0.2343 公斤／公里（平均汽油車）。',unit:'減碳'}];
 $('hero').style.setProperty('--bg','url("'+HERO_PHOTO+'")');
 $('jump').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var el=$('sr-'+b.dataset.v);if(el)el.scrollIntoView()});
 load(function(d){D=d;render()});
@@ -176,7 +176,7 @@ function render(){
         return '<article class="rt"><h4>'+esc(r.name)+'</h4>'+(r.intro?'<p class="intro">'+esc(r.intro)+'</p>':'')+
           '<div class="meta">'+meta.map(function(m){return '<span>'+m[0]+' <b>'+esc(m[1])+'</b></span>'}).join('')+'</div>'+
           (own?'<ol class="own">'+r.steps.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol>':'')+
-          (t.n?'<p class="stat"><span><b>'+t.n+'</b>場</span><span><b>'+fmt(t.p)+'</b>人次</span><span><b>'+fmt(road?t.c:t.w)+'</b>公斤'+S.unit+'</span></p>'
+          (t.n?'<p class="stat"><span><b>'+t.n+'</b>場</span><span><b>'+fmt(t.p)+'</b>人次</span><span><b>'+fmt(road?t.c:t.w)+'</b>公斤'+S.unit+'</span>'+(road&&t.w>0?'<span><b>'+fmt(t.w)+'</b>公斤撿廢</span>':'')+'</p>'
               :'<p class="stat zero">還沒有紀錄，等第一支隊伍。</p>')+
           '</article>';
       }).join('')+'</div></section>';

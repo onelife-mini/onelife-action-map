@@ -137,7 +137,7 @@ a.rw:hover{background:#faf8f3}
   <ul class="rules">
     <li><b>撿廢重量</b><span>山系、水系的每一場，都在現場用手提吊秤秤總重量，不用估的。</span></li>
     <li><b>垃圾品項</b><span>採用 ICC 國際淨灘行動的紀錄表分類，另外記錄日月潭常見的保麗龍碎片、口罩・濕紙巾、釣魚線。2026 年 11 月以前的紀錄，取自當時登錄在 ICC 愛海小旅行的資料。</span></li>
-    <li><b>減少碳排</b><span>只有路系計算。路線公里 × 人數 ÷ 每車 4 人 × 0.2343 公斤／公里（政府公告的平均汽油車排放）。</span></li>
+    <li><b>減少碳排</b><span>只有路系計算；沿路有撿垃圾時，重量另外秤重記錄。路線公里 × 人數 ÷ 每車 4 人 × 0.2343 公斤／公里（政府公告的平均汽油車排放）。</span></li>
     <li><b>行動時數</b><span>人次 × 活動時數；沒有另外記錄時數的場次，一律以 4 小時計。</span></li>
     <li><b>審核</b><span>每一筆紀錄經主辦單位審核後才公開，數字在審核當下定案，之後不會因為係數調整而改變。</span></li>
     <li><b>單位名稱</b><span>依登錄時的名稱顯示。同一場由兩家公司一起參加時，合併成一筆，數字只算一次。</span></li>
@@ -183,7 +183,7 @@ function render(){
   $('tot').innerHTML='<div><small>行動</small><b>'+CUR.length+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(P)+'</b><em>人次</em></div><div><small>撿廢</small><b>'+fmt(W)+'</b><em>公斤</em></div><div><small>減碳</small><b>'+fmt(C)+'</b><em>公斤</em></div>';
   $('rows').innerHTML=CUR.length?'<div class="rw hd"><span>日期</span><span>單位</span><span>系別</span><span>地點</span><span class="r">人數</span><span class="r">成果</span><span></span></div>'+CUR.map(function(r){
     var road=r.series==='路系';
-    return '<a class="rw" href="./#a-'+esc(r.id)+'"><span class="d">'+esc(String(r.date).replace(/-/g,'/'))+'</span><span class="nm">'+esc(r.name)+'</span><span class="sr" style="background:'+(COLORS[r.series]||'#1d2622')+'">'+esc(r.series)+'</span><span class="pt">'+esc(r.point||'')+'</span><span class="r pp">'+fmt(num(r.people))+' 人</span><span class="r kg">'+fmt(num(road?r.carbonKg:r.weightKg))+' 公斤</span><span class="go">看成果 →</span></a>';
+    return '<a class="rw" href="./#a-'+esc(r.id)+'"><span class="d">'+esc(String(r.date).replace(/-/g,'/'))+'</span><span class="nm">'+esc(r.name)+'</span><span class="sr" style="background:'+(COLORS[r.series]||'#1d2622')+'">'+esc(r.series)+'</span><span class="pt">'+esc(r.point||'')+'</span><span class="r pp">'+fmt(num(r.people))+' 人</span><span class="r kg">'+fmt(num(road?r.carbonKg:r.weightKg))+' 公斤'+(road?'減碳'+(num(r.weightKg)>0?'／撿 '+fmt(num(r.weightKg)):''):'')+'</span><span class="go">看成果 →</span></a>';
   }).join(''):'<div class="empty">這個條件下沒有紀錄。</div>';
 }
 </script>
