@@ -35,25 +35,46 @@ h2{font-size:clamp(26px,3vw,36px);margin:10px 0 22px;font-weight:900}
 .foot{max-width:1240px;margin:80px auto 0;padding:48px 6vw 60px}
 .foot .line{border-top:2px solid var(--ink);padding-top:36px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .share{display:flex;gap:12px;flex-wrap:wrap}
-.trips{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
-.trip{background:#fff;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
-.trip .ph{height:240px;background:center/cover #ccc;position:relative}
-.trip .tag{position:absolute;left:18px;top:18px;color:#fff;font-size:13px;padding:6px 12px;border-radius:999px;letter-spacing:.1em}
-.trip .bd{padding:26px 28px 30px;display:flex;flex-direction:column;gap:14px;flex:1}
-.trip h3{font-size:26px;font-weight:900}
-.trip .intro{font-size:16px;line-height:1.8;color:#3a443f}
-.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.hero{min-height:360px;background-position:center 35%}
+.jump{display:inline-flex;background:#e7e2d6;border-radius:999px;padding:4px;flex-wrap:wrap;position:sticky;top:10px;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.jump button{font:inherit;font-size:15px;padding:9px 18px;border:0;background:transparent;color:var(--ink);border-radius:999px;cursor:pointer;min-height:44px;display:flex;align-items:center;gap:7px}
+.jump button:hover{background:#fff}
+.jump i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.jump small{font-size:12px;color:var(--muted)}
+.sr{margin-top:56px;scroll-margin-top:76px}
+.sr .head{display:grid;grid-template-columns:1fr 1.15fr;border-radius:10px;overflow:hidden;background:#fff}
+.sr .pic{min-height:320px;background:center/cover #ccc;position:relative}
+.sr .pic:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,18,0) 40%,rgba(10,20,18,.75))}
+.sr .pic div{position:absolute;left:28px;bottom:24px;color:#fff;z-index:1}
+.sr .pic small{font-size:13px;letter-spacing:.3em;opacity:.9}
+.sr .pic h3{font-size:40px;font-weight:900;line-height:1.2}
+.sr .info{padding:32px 36px;display:flex;flex-direction:column;gap:20px}
+.sr .lead{font-size:19px;line-height:1.8}
+.flow{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;counter-reset:s}
+.flow li{counter-increment:s;font-size:14px;line-height:1.5;border-top:2px solid var(--c);padding-top:10px}
+.flow li:before{content:"0" counter(s);display:block;font-family:"Noto Serif TC",serif;font-weight:900;font-size:18px;color:var(--c);margin-bottom:4px}
+.how{font-size:14px;color:var(--muted);line-height:1.8}
+.how b{color:var(--ink);font-weight:500}
+.tot{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:auto}
+.tot div{padding-top:16px}
+.tot small{display:block;font-size:13px;color:var(--muted)}
+.tot b{font-size:32px;font-variant-numeric:tabular-nums;color:var(--c)}
+.tot em{font-style:normal;font-size:13px;color:var(--muted);margin-left:3px}
+.routes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px}
+.rt{background:#fff;border-radius:10px;padding:24px 26px;display:flex;flex-direction:column;gap:12px;border-top:4px solid var(--c)}
+.rt h4{font-family:"Noto Serif TC",serif;font-size:22px;font-weight:900}
+.rt .intro{font-size:15px;line-height:1.8;color:#3a443f}
+.meta{display:flex;flex-wrap:wrap;gap:6px 8px}
+.meta span{font-size:13px;background:var(--paper);border-radius:999px;padding:5px 12px;color:var(--muted)}
 .meta b{color:var(--ink);font-weight:500}
-.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:14px}
-.steps li{counter-increment:s;font-size:15px;display:flex;gap:10px;align-items:baseline}
-.steps li:before{content:counter(s);font-family:"Noto Serif TC",serif;font-weight:900;color:var(--moss);min-width:16px}
-.stat{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border-radius:6px;margin-top:auto}
-.stat div{padding:14px 16px}
-.stat small{display:block;font-size:12px;color:var(--muted)}
-.stat b{font-size:24px;font-variant-numeric:tabular-nums}
-.stat em{font-style:normal;font-size:12px;color:var(--muted);margin-left:3px}
-.empty{background:#fff;border-radius:8px;padding:28px;color:var(--muted)}
-@media (max-width:860px){.trips{grid-template-columns:1fr}.trip .ph{height:200px}.menu{gap:16px}}
+.own{list-style:none;counter-reset:o;font-size:14px;color:#3a443f;display:flex;flex-direction:column;gap:4px}
+.own li{counter-increment:o}.own li:before{content:counter(o) "　";color:var(--c);font-weight:700}
+.stat{display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line);padding-top:14px;margin-top:auto;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.stat b{font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:3px}
+.stat.zero{color:var(--c);font-weight:700}
+.empty{background:#fff;border-radius:8px;padding:28px;color:var(--muted);margin-top:24px}
+@media (max-width:860px){.sr .head{grid-template-columns:1fr}.sr .pic{min-height:220px}.sr .pic h3{font-size:30px}.sr .info{padding:24px 22px}.flow{grid-template-columns:repeat(2,1fr)}.tot b{font-size:26px}.menu{gap:16px}.jump button{padding:9px 13px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
 <body>
@@ -67,15 +88,10 @@ h2{font-size:clamp(26px,3vw,36px);margin:10px 0 22px;font-weight:900}
 <main>
 <section class="sec">
   <p class="eyebrow">TRIPS</p>
-  <h2 class="serif">日月潭的拾光行程</h2>
-  <div class="chips" id="f" role="group" aria-label="篩選系別">
-    <button type="button" data-v="全部" aria-pressed="true">全部</button>
-    <button type="button" data-v="山系" aria-pressed="false">山系・淨山</button>
-    <button type="button" data-v="水系" aria-pressed="false">水系・淨湖</button>
-    <button type="button" data-v="路系" aria-pressed="false">路系・單車</button>
-  </div>
-  <div class="trips" id="trips"><div class="empty">載入中…</div></div>
-  <p class="note">累積成果依每場行動的紀錄自動計算；撿廢一律現場秤重，減碳以平均汽油車 0.2343 公斤／公里、每車 4 人計算。</p>
+  <h2 class="serif">三種方式，同一套紀錄方法</h2>
+  <div class="jump" id="jump" role="group" aria-label="跳到系別"></div>
+  <div id="trips"><div class="empty">載入中…</div></div>
+  <p class="note" style="margin-top:20px">累積成果依每場行動的紀錄自動計算，審核後才公開。計算方法見「<a href="about.html">關於</a>」。</p>
 </section>
 </main>
 <footer class="foot"><div class="line">
@@ -94,27 +110,44 @@ function num(v){v=Number(v);return isFinite(v)?v:0}
 function fmt(v){return (Math.round(v*10)/10).toLocaleString('zh-TW')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function load(cb){fetch(DATA_URL).then(function(r){return r.json()}).then(cb).catch(function(){cb(null)})}
-var D=null,f='全部';
-$('hero').style.setProperty('--bg','url("'+SERIES_PHOTO['水系']+'")');
-$('f').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call($('f').children,function(x){x.setAttribute('aria-pressed',x===b)});f=b.dataset.v;render()});
+var D=null;
+var SR=[
+ {k:'山系',en:'MOUNTAIN',t:'山系・淨山',lead:'走進步道，一路撿拾，把山上的垃圾帶下山。',how:'<b>怎麼算</b>　現場用吊秤秤總重量，品項照 ICC 國際淨灘紀錄表分類。',unit:'撿廢'},
+ {k:'水系',en:'LAKE',t:'水系・淨湖',lead:'划著立槳出發，撈起湖面與湖岸的漂流物。',how:'<b>怎麼算</b>　上岸後分類秤重，另外記錄保麗龍碎片、釣魚線等日月潭常見的漂流物。',unit:'撿廢'},
+ {k:'路系',en:'ROAD',t:'路系・單車',lead:'用踩踏取代開車，把騎過的每一公里換算成減少的碳排。',how:'<b>怎麼算</b>　路線公里 × 人數 ÷ 每車 4 人 × 0.2343 公斤／公里（平均汽油車）。',unit:'減碳'}];
+$('hero').style.setProperty('--bg','url("'+HERO_PHOTO+'")');
+$('jump').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var el=$('sr-'+b.dataset.v);if(el)el.scrollIntoView()});
 load(function(d){D=d;render()});
+function sum(list){var o={n:list.length,p:0,w:0,c:0};list.forEach(function(x){o.p+=num(x.people);o.w+=num(x.weightKg);o.c+=num(x.carbonKg)});return o}
 function render(){
   if(!D){$('trips').innerHTML='<div class="empty">資料暫時讀不到，請稍後再試。</div>';return}
-  var O={'山系':0,'水系':1,'路系':2};
-  var rs=(D.routes||[]).filter(function(r){return f==='全部'||r.series===f}).sort(function(a,b){return (O[a.series]||0)-(O[b.series]||0)});
-  if(!rs.length){$('trips').innerHTML='<div class="empty">這個系別還沒有行程。</div>';return}
-  $('trips').innerHTML=rs.map(function(r){
-    var list=(D.records||[]).filter(function(x){return x.route===r.name}),p=0,w=0,c=0;
-    list.forEach(function(x){p+=num(x.people);w+=num(x.weightKg);c+=num(x.carbonKg)});
-    var road=r.series==='路系',pt=(D.points||{})[r.start],photo=(pt&&pt.photo)||SERIES_PHOTO[r.series]||HERO_PHOTO;
-    var meta=[['地點',r.start+(r.end?' → '+r.end:'')],['距離',r.km!==''&&r.km!=null?r.km+' 公里':''],['時間',r.hours?'約 '+r.hours+' 小時':''],['適合',r.who]].filter(function(m){return m[1]});
-    return '<article class="trip"><div class="ph" style="background-image:url(&quot;'+esc(photo)+'&quot;)"><span class="tag" style="background:'+(COLORS[r.series]||'#1d2622')+'">'+esc(r.series)+'</span></div>'+
-      '<div class="bd"><h3 class="serif">'+esc(r.name)+'</h3>'+(r.intro?'<p class="intro">'+esc(r.intro)+'</p>':'')+
-      '<div class="meta">'+meta.map(function(m){return '<span>'+m[0]+' <b>'+esc(m[1])+'</b></span>'}).join('')+'</div>'+
-      (r.steps&&r.steps.length?'<ol class="steps">'+r.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol>':'')+
-      '<div class="stat"><div><small>累積行動</small><b>'+list.length+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(p)+'</b><em>人次</em></div><div><small>'+(road?'減碳':'撿廢')+'</small><b>'+fmt(road?c:w)+'</b><em>公斤</em></div></div>'+
-      '</div></article>';
-  }).join('');
+  var routes=D.routes||[],recs=D.records||[],h='',j='';
+  SR.forEach(function(S,si){
+    var rs=routes.filter(function(r){return r.series===S.k});if(!rs.length)return;
+    var road=S.k==='路系',c=COLORS[S.k],T=sum(recs.filter(function(x){return x.series===S.k}));
+    var common=(rs[0].steps||[]),ck=common.join('|'),who=rs.every(function(r){return r.who===rs[0].who})?rs[0].who:'',hrs=rs.every(function(r){return r.hours===rs[0].hours})?rs[0].hours:'';
+    j+='<button type="button" data-v="'+si+'"><i style="background:'+c+'"></i>'+S.k+' <small>'+rs.length+' 條</small></button>';
+    h+='<section class="sr" id="sr-'+si+'" style="--c:'+c+'"><div class="head"><div class="pic" style="background-image:url(&quot;'+SERIES_PHOTO[S.k]+'&quot;)"><div><small>'+S.en+'</small><h3 class="serif">'+S.t+'</h3></div></div>'+
+      '<div class="info"><p class="lead">'+S.lead+'</p>'+
+      (common.length?'<ol class="flow">'+common.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol>':'')+
+      '<p class="how">'+S.how+((who||hrs)?'<br><b>適合</b>　'+esc(who)+(hrs?'，每趟約 '+esc(hrs)+' 小時':''):'')+'</p>'+
+      (T.n?'<div class="tot"><div><small>累積行動</small><b>'+T.n+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(T.p)+'</b><em>人次</em></div><div><small>'+S.unit+'</small><b>'+fmt(road?T.c:T.w)+'</b><em>公斤</em></div></div>'
+           :'<p class="how" style="border-top:1px solid var(--line);padding-top:16px;margin-top:auto;color:var(--c);font-weight:700">這一系還沒有紀錄，第一筆正在路上。</p>')+
+      '</div></div><div class="routes">'+
+      rs.map(function(r){
+        var t=sum(recs.filter(function(x){return x.route===r.name}));
+        var meta=[['地點',r.start+(r.end?' → '+r.end:'')],['距離',r.km!==''&&r.km!=null?r.km+' 公里':''],['時間',!hrs&&r.hours?'約 '+r.hours+' 小時':''],['適合',!who?r.who:'']].filter(function(m){return m[1]});
+        var own=(r.steps||[]).join('|')!==ck&&(r.steps||[]).length;
+        return '<article class="rt"><h4>'+esc(r.name)+'</h4>'+(r.intro?'<p class="intro">'+esc(r.intro)+'</p>':'')+
+          '<div class="meta">'+meta.map(function(m){return '<span>'+m[0]+' <b>'+esc(m[1])+'</b></span>'}).join('')+'</div>'+
+          (own?'<ol class="own">'+r.steps.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol>':'')+
+          (t.n?'<p class="stat"><span><b>'+t.n+'</b>場</span><span><b>'+fmt(t.p)+'</b>人次</span><span><b>'+fmt(road?t.c:t.w)+'</b>公斤'+S.unit+'</span></p>'
+              :'<p class="stat zero">還沒有紀錄，等第一支隊伍。</p>')+
+          '</article>';
+      }).join('')+'</div></section>';
+  });
+  $('jump').innerHTML=j;
+  $('trips').innerHTML=h||'<div class="empty">目前還沒有公開的行程。</div>';
 }
 </script>
 </body>
