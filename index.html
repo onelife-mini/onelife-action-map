@@ -580,7 +580,7 @@ function showResult(r){
   $('rSub').textContent=String(r.date).replace(/-/g,'.')+' ・ '+r.point+(r.route?'（'+r.route+'）':'')+' ・ '+r.series;
   document.title=r.name+'的拾光行動成果｜親清日月潭';
   var m=mainOf(r),k=[['參與人數',fmt(num(r.people)),'人'],['行動時數',fmt(num(r.personHours)),'小時'],[m.label,fmt(m.v),'公斤']];
-  if(r.series==='路系'){k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);if(num(r.weightKg)>0)k.push(['沿路撿廢',fmt(num(r.weightKg)),'公斤'])}
+  if(r.series==='路系'){k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);if(num(r.weightKg)>0)k.push(['月牙灣撿廢',fmt(num(r.weightKg)),'公斤'])}
   else if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
   else{var c=0;Object.keys(r.items||{}).forEach(function(i){c+=num(r.items[i])});k.push(['撿起件數',fmt(c),'件'])}
   $('rKpis').innerHTML=k.map(function(x){return '<div><small>'+x[0]+'</small><strong class="serif">'+x[1]+'</strong><em>'+x[2]+'</em></div>'}).join('');
