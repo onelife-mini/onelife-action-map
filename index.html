@@ -33,7 +33,7 @@ h1{font-size:clamp(38px,6vw,76px);line-height:1.12;font-weight:900;margin-top:11
 .reach{display:flex;gap:28px;flex-wrap:wrap;margin-top:18px;font-size:15px;opacity:.95}
 .reach b{font-size:22px;margin:0 4px;font-family:"Noto Serif TC",serif}
 .updated{font-size:12px;opacity:.75;margin-top:12px}
-.sec{padding:84px 6vw 0;max-width:1440px;margin:0 auto}
+.sec{scroll-margin-top:20px;padding:84px 6vw 0;max-width:1440px;margin:0 auto}
 .eyebrow{font-size:13px;letter-spacing:.3em;color:var(--moss);font-weight:700}
 h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .bar{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
@@ -172,6 +172,38 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   .card{height:340px}
   .seg .ph{height:240px}
 }
+
+/* ===== 主選單 ===== */
+.nav{position:relative;z-index:20;flex-wrap:nowrap}
+.menu{display:flex;gap:4px;align-items:center;margin-left:auto}
+.menu a{border-bottom:0}
+.mi{position:relative;flex:none}
+.mi>a{display:flex;align-items:center;gap:7px;padding:12px 14px;border-radius:999px;font-size:15px;letter-spacing:.08em}
+.mi>a:after{content:"";width:6px;height:6px;border-right:1.5px solid;border-bottom:1.5px solid;transform:rotate(45deg) translateY(-2px);opacity:.8}
+.mi.cur>a{background:rgba(255,255,255,.2)}
+.mi:hover>a,.mi:focus-within>a{background:#fff;color:#1d2622}
+.sub2{position:absolute;left:0;top:100%;padding-top:8px;min-width:190px;display:none}
+.mi:hover .sub2,.mi:focus-within .sub2{display:block}
+.sub2 div{background:#fff;border-radius:14px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.sub2 a{display:block;padding:12px 14px;border-radius:8px;color:#1d2622;font-size:15px;letter-spacing:.04em}
+.sub2 a:hover{background:#f4f1ea}
+.cta{background:#9fd0a8;color:#0f1c1b!important;font-weight:700;padding:12px 20px;border-radius:999px;font-size:15px;margin-left:10px;white-space:nowrap;flex:none}
+.cta:hover{background:#fff}
+.burger{display:none}
+.back a{padding:10px 0}
+@media (max-width:1020px){
+  .nav{flex-wrap:wrap}
+  .burger{display:flex;margin-left:auto;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.6);background:rgba(0,0,0,.25);color:#fff;font-size:20px;align-items:center;justify-content:center;cursor:pointer}
+  .menu{display:none;flex-basis:100%;flex-direction:column;align-items:stretch;background:#fff;border-radius:14px;padding:10px;margin:10px 0 0;gap:0}
+  .nav.open .menu{display:flex}
+  .mi>a{color:#1d2622;font-weight:700;padding:14px 12px 8px}
+  .mi>a:after{display:none}
+  .mi.cur>a{background:none}
+  .sub2{position:static;display:block;padding:0 0 8px 12px;min-width:0}
+  .sub2 div{box-shadow:none;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  .sub2 a{padding:10px 14px;background:#f4f1ea;border-radius:999px;font-size:14px}
+  .cta{margin:8px 0 2px;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -179,7 +211,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <!-- ===== 總覽 ===== -->
 <main id="overview">
 <header class="hero" id="heroMain">
-  <div class="nav"><a class="brand" href="./">親清日月潭<small>by OneLife</small></a><nav class="menu" aria-label="主選單"><a href="./" aria-current="page">首頁</a><a href="trips.html">行程</a><a href="about.html">關於</a></nav></div>
+  <div class="nav"><a class="brand" href="./">親清日月潭<small>by OneLife</small></a><button type="button" class="burger" aria-label="開啟選單" onclick="this.parentNode.classList.toggle('open')">☰</button><nav class="menu" aria-label="主選單"><div class="mi"><a href="about.html">關於親清</a><div class="sub2"><div><a href="about.html#why">理念</a><a href="about.html#rules">拾光守則</a><a href="about.html#who">主辦單位</a></div></div></div><div class="mi"><a href="trips.html">行程</a><div class="sub2"><div><a href="trips.html#sr-0">山系・淨山</a><a href="trips.html#sr-1">水系・淨湖</a><a href="trips.html#sr-2">路系・單車</a></div></div></div><div class="mi cur"><a href="./" aria-current="page">成果地圖</a><div class="sub2"><div><a href="./#actionmap">行動地圖</a><a href="./#growth">年度成長</a><a href="./#latest">最新行動</a></div></div></div><div class="mi"><a href="partners.html">參與企業</a><div class="sub2"><div><a href="partners.html#wall">成果牆</a><a href="partners.html#cases">歷年合作案例</a></div></div></div><div class="mi"><a href="data.html">公開數據</a><div class="sub2"><div><a href="data.html#records">全部紀錄</a><a href="data.html#method">怎麼計算</a></div></div></div><a class="cta" href="https://onelife.com.tw/">帶你的團隊來</a></nav></div>
   <div>
     <h1 class="serif">每一次行動，<br>都讓日月潭更清澈。</h1>
     <p class="sub">山系撿廢、水系淨湖、路系踩踏。每一個來過的團隊，都在日月潭留下一筆看得見的紀錄。</p>
@@ -194,7 +226,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   </div>
 </header>
 
-<section class="sec">
+<section class="sec" id="actionmap">
   <p class="eyebrow">ACTION MAP</p>
   <h2 class="serif">我們在哪裡行動</h2>
   <div class="bar">
@@ -224,7 +256,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="growth">
   <p class="eyebrow">GROWTH</p>
   <h2 class="serif">一路累積的成果</h2>
   <div class="bar">
@@ -247,7 +279,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="latest">
   <p class="eyebrow">LATEST</p>
   <h2 class="serif">最新行動</h2>
   <div class="recent" id="recent"></div>
@@ -266,7 +298,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 <!-- ===== 單場成果頁 ===== -->
 <main id="result" class="hide">
 <header class="hero" id="rHero">
-  <div class="nav"><a class="brand" href="./">親清日月潭<small>by OneLife</small></a><nav class="menu" aria-label="主選單"><a href="#">← 回首頁</a></nav></div>
+  <div class="nav"><a class="brand" href="./">親清日月潭<small>by OneLife</small></a><nav class="back"><a href="#">← 回首頁</a></nav></div>
   <div>
     <p class="eyebrow" style="color:#e6efe0">親清日月潭 ・ 拾光行動成果</p>
     <h1 class="serif" id="rName" style="margin-top:14px"></h1>
@@ -529,7 +561,7 @@ function route(){
   }else{
     $('result').classList.add('hide');$('overview').classList.remove('hide');
     document.title='親清日月潭｜拾光行動';
-    setTimeout(function(){map.invalidateSize()},50);
+    var t=h&&document.getElementById(h);if(t)setTimeout(function(){t.scrollIntoView()},60);
   }
 }
 function showResult(r){
