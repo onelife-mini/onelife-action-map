@@ -171,7 +171,7 @@ function render(){
       '</div></div><div class="routes">'+
       rs.map(function(r){
         var t=sum(recs.filter(function(x){return x.route===r.name}));
-        var meta=[['地點',r.start+(r.end?' → '+r.end:'')],['距離',r.km!==''&&r.km!=null?r.km+' 公里':''],['時間',!hrs&&r.hours?'約 '+r.hours+' 小時':''],['適合',!who?r.who:'']].filter(function(m){return m[1]});
+        var meta=[['地點',r.end||r.start],['距離',r.km!==''&&r.km!=null?r.km+' 公里':''],['時間',!hrs&&r.hours?'約 '+r.hours+' 小時':''],['適合',!who?r.who:'']].filter(function(m){return m[1]});
         var own=(r.steps||[]).join('|')!==ck&&(r.steps||[]).length;
         return '<article class="rt"><h4>'+esc(r.name)+'</h4>'+(r.intro?'<p class="intro">'+esc(r.intro)+'</p>':'')+
           '<div class="meta">'+meta.map(function(m){return '<span>'+m[0]+' <b>'+esc(m[1])+'</b></span>'}).join('')+'</div>'+

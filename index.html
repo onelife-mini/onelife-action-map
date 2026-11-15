@@ -436,7 +436,7 @@ function renderMap(rs,anim){
   Object.keys(D.points).forEach(function(k){var p=D.points[k];if(p&&p.lat&&p.lng)pts[k]={name:k,lat:+p.lat,lng:+p.lng,series:p.series,list:[]}});
   rs.filter(function(r){return r.lat&&r.lng}).forEach(function(r){(pts[r.point]=pts[r.point]||{name:r.point,lat:+r.lat,lng:+r.lng,series:r.series,list:[]}).list.push(r)});
   /* 系別篩選時，只留該系點位 */
-  Object.keys(pts).forEach(function(k){if(fSeries!=='全部'&&pts[k].series!==fSeries&&!pts[k].list.length)delete pts[k]});
+  Object.keys(pts).forEach(function(k){if(fSeries!=='全部'&&pts[k].series!==fSeries&&!pts[k].list.length&&!(fSeries==='路系'&&(k==='水社'||k==='月牙灣')))delete pts[k]});
   var ex='',P=0,W=0,C=0;
   Object.keys(pts).forEach(function(k){
     var p=pts[k],q=proj(p.lat,p.lng);p.v=0;p.offNote='';
@@ -445,9 +445,9 @@ function renderMap(rs,anim){
     if(q.y>690)q.y=690; p.x=Math.max(20,Math.min(580,q.x));p.y=q.y;
   });
   MP=pts;
-  /* 單車路線：向山 → 水社 */
-  var a=pts['向山'],b=pts['水社'];
-  if(a&&b&&(fSeries==='全部'||fSeries==='路系'))ex+='<path class="route" d="M'+a.x+' '+a.y+' C '+(a.x-30)+' '+(a.y-60)+', '+(b.x-110)+' '+(b.y+30)+', '+b.x+' '+b.y+'"/>';
+  /* 單車路線：水社 → 向山 → 月牙灣 */
+  var a=pts['水社'],b=pts['月牙灣'],m=proj(23.852,120.9023);
+  if(a&&b&&(fSeries==='全部'||fSeries==='路系'))ex+='<path class="route" d="M'+a.x+' '+a.y+' C '+(a.x-110)+' '+(a.y+30)+', '+(m.x-30)+' '+(m.y-60)+', '+m.x+' '+m.y+' S '+(b.x-40)+' '+(b.y-60)+', '+b.x+' '+b.y+'"/>';
   $('mapExtra').innerHTML=ex;
   var road=fSeries==='路系';
   $('mapTotal').innerHTML=tYear==null?'':'<small>累積到 '+tYear+' 年</small><b>'+fmt(road?C:W)+'</b> <em>公斤'+(road?'減碳':'')+'</em><br><em>'+fmt(P)+' 人次 ・ '+rs.length+' 場</em>';
@@ -500,6 +500,7 @@ function showPoint(k,auto){
     '<div class="nums"><div><small>行動</small><b>'+p.list.length+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(people)+'</b><em>人次</em></div>'+
     '<div><small>'+(road?'減碳':'撿廢')+'</small><b>'+fmt(road?c:w)+'</b><em>公斤</em></div></div>'+
     (line?'<p class="top3">'+line+'</p>':'')+
+    (!road&&c>0?'<p class="top3"><span>單車減碳</span>'+fmt(c)+' 公斤</p>':'')+
     (ny?'<p class="top3" style="color:#93a29c">'+tYear+' 年新增 '+ny+' 場 ・ '+fmt(np)+' 人 ・ '+fmt(nv)+' 公斤</p>':'')+
     (latest?'<a class="go" href="#a-'+esc(latest.id)+'">看這裡最新一場行動 →</a>':'<p class="hint" style="margin-top:auto;color:#93a29c">'+(tYear&&tYear<YEARS[YEARS.length-1]?'到 '+tYear+' 年為止，這裡還沒有紀錄。':'這裡的第一筆行動紀錄，正在路上。')+'</p>')+
     '</div></div>';
