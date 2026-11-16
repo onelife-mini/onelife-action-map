@@ -206,6 +206,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   .cta{margin:8px 0 2px;text-align:center}
 }
 #rHero{background-position:center 62%}
+.gs{background:#eef4ea;border-left:3px solid #3d6b3c;padding:14px 18px;font-size:15px;line-height:1.8;color:#2c3a2e;margin-top:16px;border-radius:4px}.gs b{display:block;color:#3d6b3c;letter-spacing:.1em;font-size:14px}.gs a{color:#3d6b3c;font-weight:700;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -311,6 +312,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   <p class="eyebrow">IMPACT</p>
   <h2 class="serif">這次行動留下的改變</h2>
   <div class="r-kpis" id="rKpis"></div>
+  <div class="gs hide" id="rGS"><b>這是碳註銷行程</b>逐路船騎經 ARO 碳足跡計算，每位旅客碳排從一般行程的 91 公斤降到 45 公斤，可申請國際黃金標準（GS）碳註銷證明。這個數字是官方認證的整趟行程，和上面以距離估算的減碳分開計算。<a href="https://www.taiwan.net.tw/m1.aspx?jid=1142&sNo=0000108" target="_blank" rel="noopener">官方說明 →</a></div>
 </section>
 <section class="sec" id="rItemsSec">
   <p class="eyebrow">WHAT WE PICKED UP</p>
@@ -590,6 +592,7 @@ function showResult(r){
   if(r.series!=='路系'&&num(r.carbonKg)>0)k.push(['減少碳排',fmt(num(r.carbonKg)),'公斤']);
   if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
   if(r.series==='山系'){var c=0;Object.keys(r.items||{}).forEach(function(i){c+=num(r.items[i])});k.push(['撿起件數',fmt(c),'件'])}
+  $('rGS').classList.toggle('hide',!/逐路船騎/.test(r.route||''));
   $('rKpis').innerHTML=k.map(function(x){return '<div><small>'+x[0]+'</small><strong class="serif">'+x[1]+'</strong><em>'+x[2]+'</em></div>'}).join('');
   var items=Object.keys(r.items||{}).filter(function(i){return num(r.items[i])>0}).sort(function(a,b){return num(r.items[b])-num(r.items[a])});
   var mx=items.length?num(r.items[items[0]]):1;

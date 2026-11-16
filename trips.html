@@ -108,6 +108,7 @@ h2{font-size:clamp(26px,3vw,36px);margin:10px 0 22px;font-weight:900}
   .sub2 a{padding:10px 14px;background:#f4f1ea;border-radius:999px;font-size:14px}
   .cta{margin:8px 0 2px;text-align:center}
 }
+.gs{background:#eef4ea;border-left:3px solid #3d6b3c;padding:10px 14px;font-size:14px;line-height:1.7;color:#2c3a2e;margin:10px 0}.gs b{display:block;color:#3d6b3c;letter-spacing:.1em;font-size:13px}.gs a{color:#3d6b3c;font-weight:700;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -153,6 +154,7 @@ $('jump').addEventListener('click',function(e){var b=e.target.closest('button');
 load(function(d){D=d;render()});
 function goHash(){var e=location.hash&&document.getElementById(location.hash.slice(1));if(e)e.scrollIntoView()}
 window.addEventListener('hashchange',goHash);
+var GS_URL='https://www.taiwan.net.tw/m1.aspx?jid=1142&sNo=0000108';
 function sum(list){var o={n:list.length,p:0,w:0,c:0};list.forEach(function(x){o.p+=num(x.people);o.w+=num(x.weightKg);o.c+=num(x.carbonKg)});return o}
 function render(){
   if(!D){$('trips').innerHTML='<div class="empty">資料暫時讀不到，請稍後再試。</div>';return}
@@ -175,6 +177,7 @@ function render(){
         var own=(r.steps||[]).join('|')!==ck&&(r.steps||[]).length;
         return '<article class="rt"><h4>'+esc(r.name)+'</h4>'+(r.intro?'<p class="intro">'+esc(r.intro)+'</p>':'')+
           '<div class="meta">'+meta.map(function(m){return '<span>'+m[0]+' <b>'+esc(m[1])+'</b></span>'}).join('')+'</div>'+
+          (/逐路船騎/.test(r.name)?'<p class="gs"><b>碳註銷行程</b>經 ARO 碳足跡計算，每人碳排從 91 降到 45 公斤；可申請國際黃金標準（GS）碳註銷證明。<a href="'+GS_URL+'" target="_blank" rel="noopener">官方說明 →</a></p>':'')+
           (own?'<ol class="own">'+r.steps.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol>':'')+
           (t.n?'<p class="stat"><span><b>'+t.n+'</b>場</span><span><b>'+fmt(t.p)+'</b>人次</span><span><b>'+fmt(road?t.c:t.w)+'</b>公斤'+S.unit+'</span>'+(road&&t.w>0?'<span><b>'+fmt(t.w)+'</b>公斤撿廢</span>':'')+'</p>'
               :'<p class="stat zero">還沒有紀錄，等第一支隊伍。</p>')+
