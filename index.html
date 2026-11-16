@@ -134,7 +134,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 .note{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.7}
 .demo{position:fixed;left:16px;bottom:16px;background:#b5642c;color:#fff;font-size:13px;padding:8px 14px;border-radius:999px;z-index:1000}
 /* 單場成果頁 */
-.r-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-radius:6px}
+.r-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0;background:#fff;border-radius:6px}
 .r-kpis div{padding:26px;border-left:1px solid var(--line)}
 .r-kpis div:first-child{border-left:0}
 .r-kpis small{display:block;font-size:14px;color:var(--muted)}
@@ -159,7 +159,8 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
   .hero{min-height:640px;padding:28px 6vw}
   h1{margin-top:80px}
   .kpis,.r-kpis{grid-template-columns:repeat(2,1fr)}
-  .r-kpis div:nth-child(3){border-left:0}
+  .r-kpis div:last-child:nth-child(odd){grid-column:1/-1}
+  .r-kpis div:nth-child(odd){border-left:0}
   .mapwrap,.three,.recent,.seg{grid-template-columns:1fr}
   .seg:nth-child(even) .ph{order:0}
   .mapside{padding:18px 12px 10px}
@@ -290,7 +291,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 
 <footer class="foot"><div class="line">
   <div><h2 class="serif" style="margin:0">想讓你的團隊，也留下一筆紀錄？</h2>
-  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重 ・ 數據經執行單位審核後公開</p>
+  <p class="note">減碳以行程距離取代開車估算（平均汽油車 0.2343 公斤／公里、每車 4 人），並於審核當下定案 ・ 撿廢一律現場秤重 ・ 數據經執行單位審核後公開</p>
   <p class="note">執行單位：日月潭戶外運動專家有限公司</p></div>
   <div class="share"><a class="btn ghost" href="trips.html">看行程</a><a class="btn" href="https://onelife.com.tw/">帶你的團隊來 →</a></div>
 </div></footer>
@@ -333,7 +334,7 @@ h2{font-size:clamp(28px,3vw,40px);margin:10px 0 24px;font-weight:900}
 </section>
 <footer class="foot"><div class="line">
   <div><h2 class="serif" style="margin:0">也想帶團隊來日月潭行動？</h2>
-  <p class="note">減碳以政府公告平均汽油車 0.2343 公斤／公里、每車 4 人計算，並於審核當下定案 ・ 撿廢一律現場秤重</p></div>
+  <p class="note">減碳以行程距離取代開車估算（平均汽油車 0.2343 公斤／公里、每車 4 人），並於審核當下定案 ・ 撿廢一律現場秤重</p></div>
   <div class="share"><a class="btn ghost" href="#">看全部行動</a><a class="btn" href="https://onelife.com.tw/">帶你的團隊來 →</a></div>
 </div></footer>
 </main>
@@ -505,7 +506,7 @@ function showPoint(k,auto){
     '<div class="nums"><div><small>行動</small><b>'+p.list.length+'</b><em>場</em></div><div><small>參與</small><b>'+fmt(people)+'</b><em>人次</em></div>'+
     '<div><small>'+(road?'減碳':'撿廢')+'</small><b>'+fmt(road?c:w)+'</b><em>公斤</em></div></div>'+
     (line?'<p class="top3">'+line+'</p>':'')+
-    (!road&&c>0?'<p class="top3"><span>單車減碳</span>'+fmt(c)+' 公斤</p>':'')+
+    (!road&&c>0?'<p class="top3"><span>減碳</span>'+fmt(c)+' 公斤</p>':'')+
     (ny?'<p class="top3" style="color:#93a29c">'+tYear+' 年新增 '+ny+' 場 ・ '+fmt(np)+' 人 ・ '+fmt(nv)+' 公斤</p>':'')+
     (latest?'<a class="go" href="#a-'+esc(latest.id)+'">看這裡最新一場行動 →</a>':'<p class="hint" style="margin-top:auto;color:#93a29c">'+(tYear&&tYear<YEARS[YEARS.length-1]?'到 '+tYear+' 年為止，這裡還沒有紀錄。':'這裡的第一筆行動紀錄，正在路上。')+'</p>')+
     '</div></div>';
@@ -586,8 +587,9 @@ function showResult(r){
   document.title=r.name+'的拾光行動成果｜親清日月潭';
   var m=mainOf(r),k=[['參與人數',fmt(num(r.people)),'人'],['行動時數',fmt(num(r.personHours)),'小時'],[m.label,fmt(m.v),'公斤']];
   if(r.series==='路系'){k.push(['踩踏距離',fmt(num(r.km)),'公里／人']);if(num(r.weightKg)>0)k.push(['月牙灣撿廢',fmt(num(r.weightKg)),'公斤'])}
-  else if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
-  else{var c=0;Object.keys(r.items||{}).forEach(function(i){c+=num(r.items[i])});k.push(['撿起件數',fmt(c),'件'])}
+  if(r.series!=='路系'&&num(r.carbonKg)>0)k.push(['減少碳排',fmt(num(r.carbonKg)),'公斤']);
+  if(r.series==='水系')k.push(['水域安全教育',fmt(num(r.safety)),'人']);
+  if(r.series==='山系'){var c=0;Object.keys(r.items||{}).forEach(function(i){c+=num(r.items[i])});k.push(['撿起件數',fmt(c),'件'])}
   $('rKpis').innerHTML=k.map(function(x){return '<div><small>'+x[0]+'</small><strong class="serif">'+x[1]+'</strong><em>'+x[2]+'</em></div>'}).join('');
   var items=Object.keys(r.items||{}).filter(function(i){return num(r.items[i])>0}).sort(function(a,b){return num(r.items[b])-num(r.items[a])});
   var mx=items.length?num(r.items[items[0]]):1;
